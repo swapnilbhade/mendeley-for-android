@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffffff"
+    >
+
+<ImageView 
+	android:id="@+id/login_page_image"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:src="@drawable/mendeley"></ImageView>
+<TextView
+	android:layout_below="@id/login_page_image"
+	android:id="@+id/login_page_welcome"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="@string/login_text"></TextView>
+<Button 
+	android:layout_alignParentRight="true"
+	android:layout_below="@id/login_page_welcome"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:id="@+id/login_button"
+	android:text="@string/login_button_text"
+	android:layout_gravity="center_horizontal"></Button>
+<CheckedTextView 
+	android:checked="true"
+    android:clickable="true"
+    android:focusable="true"
+ 	android:textColor="#000000"
+ 	android:layout_alignParentRight="true"
+ 	android:layout_below="@id/login_button"
+ 	android:layout_width="wrap_content"
+ 	android:layout_height="wrap_content"
+ 	android:id="@+id/login_auto"
+ 	android:text="@string/auto_login_checkbox_text"
+ 	android:layout_gravity="center_horizontal"
+ 	android:checkMark="?android:attr/listChoiceIndicatorMultiple" android:gravity="center"></CheckedTextView>
+<TextView
+	android:layout_alignParentBottom="true"
+	android:layout_width="wrap_content"
+	android:id="@+id/login_page_credits"
+	android:layout_height="wrap_content"
+	android:text="@+id/TextView02"
+	android:gravity="bottom|right"></TextView>
+
+</RelativeLayout>

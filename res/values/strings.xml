@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mendeley</string>
+	<string name="login_text">Welcome to Mendeley for Android. To begin, you\'ll need to authorize Mendeley for Android to access your account data, by using the button below. This is performed using OAuth and Mendeley for Android will never see your Mendeley credentials.</string>
+	<string name="login_button_text">Login to Mendeley \>\></string>
+	<string name="auto_login_checkbox_text">Login automatically</string>
+</resources>
