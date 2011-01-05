@@ -21,118 +21,54 @@
 
 package com.martineve.mendroid;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Map;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
+import android.accounts.Account;
+import android.accounts.AccountAuthenticatorActivity;
+import android.accounts.AccountManager;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckedTextView;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-public class MendeleyDroidLogin extends Activity implements OnClickListener {
+public class MendeleyDroidLogin extends AccountAuthenticatorActivity implements OnClickListener {
 
 	String request_token;
-	private SharedPreferences s_settings;
-
-	/** Makes a long toast */
-	private void longToast(String message)
-	{
-		CharSequence text = message;
-		int duration = Toast.LENGTH_LONG;
-
-		Toast toast = Toast.makeText(this, text, duration);
-		toast.show();
-	}
-
-	/** Moves to the main screen */
-	private void moveToMain()
-	{
-		Intent launchMain = new Intent(MendeleyDroidLogin.this, MainScreenTabWidget.class);
-        
-		startActivity(launchMain);
-	}  
 	
 	/** Handles the Login button click */
-	public void onClick(View v) {
-		
-		// save the checkbox state
-		SharedPreferences.Editor editor = s_settings.edit();
-	    editor.putBoolean("LoginAutomatically", ((CheckedTextView) findViewById(R.id.login_auto)).isChecked());
-
-	    editor.commit();
-	    
-	    // login
-		doLogin();
-	}
-	
-	/** Logs in to Mendeley */
-	public void doLogin()
-	{
-		// get the request token
-		ProgressDialog dialog = ProgressDialog.show(this, "", "Communicating with Mendeley, please wait...", true);
-
-		String strAuthURL;
-		try {
-			strAuthURL = OAuth.CONNECTOR.getAuthenticationURL();
-			dialog.cancel();
-
-			Intent i = new Intent(Intent.ACTION_VIEW);
-			i.setData(Uri.parse(strAuthURL));
-
-			startActivityForResult(i, 0);
-		} catch (Exception e) {
-			dialog.cancel();
-			longToast("Got exception while authenticating:\n" + e.getMessage());
+	public void onClick(View v) {		
+		Account account = new Account(((EditText)findViewById(R.id.login_page_identifier)).getText().toString(), "com.martineve.mendroid.account");
+		AccountManager am = AccountManager.get(this);
+		try{
+			boolean accountCreated = am.addAccountExplicitly(account, null, null);
+			
+			if(!accountCreated)
+			{
+				Common.longToast("There was an error creating the account. Ensure the identifier is unique and not already in use.", this);
+			}
+			else
+			{			
+				am.invalidateAuthToken("com.martineve.mendroid.account", "77ba1bf8078fb955bebea33d80c5428804d24b693/19d2753c2f9e42ea91e73c04e59e43db");
+				
+				am.getAuthToken(account, "com.martineve.mendroid.account", null, this, null, null);
+			}
+		} catch (Exception e)
+		{
+			Common.longToast("There was an error creating the account: " + e.getMessage(), this);
+			Log.e("MendeleyDroidLogin", "There was an error creating the account.", e);
 		}
+		
 	}
+
 	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		s_settings = getApplication().getSharedPreferences(Settings.PREFS_NAME, 0);
-		
-		// check if we have some settings already
-		if (s_settings.contains("Token") && s_settings.contains("TokenSecret"))
-		{
-			// instantiate the connector with a context object and a previous token and token secret
-			if(OAuth.CONNECTOR == null)
-				OAuth.CONNECTOR = new MendeleyConnector(getApplication(), s_settings.getString("Token", ""), s_settings.getString("TokenSecret", ""));
-			
-			if(s_settings.getBoolean("LoginAutomatically", false))
-			{
-				shortToast("Attempting to use previous credentials.");
-				
-				// move to the next intent
-				moveToMain();
-			}
-		}
-		else
-		{
-			// instantiate the connector with a context object
-			if(OAuth.CONNECTOR == null)
-				OAuth.CONNECTOR = new MendeleyConnector(getApplication());
-			
-			if(s_settings.getBoolean("LoginAutomatically", false))
-			{
-				shortToast("Logging in to Mendeley.");
-				doLogin();
-			}
-		}
 		
 		setContentView(R.layout.main);
 
@@ -144,29 +80,6 @@ public class MendeleyDroidLogin extends Activity implements OnClickListener {
 		credits.setText(Html.fromHtml("Copyright <a href=\"http://www.martineve.com\">Martin Paul Eve</a>, 2011"));
 		credits.setMovementMethod(LinkMovementMethod.getInstance());
 		
-		// setup the checkbox
-		CheckedTextView chkBox = (CheckedTextView) findViewById(R.id.login_auto);
-		chkBox.setChecked(s_settings.getBoolean("LoginAutomatically", true));
-	    chkBox.setOnClickListener(new View.OnClickListener() {
-	        public void onClick(View v)
-	        {
-	            ((CheckedTextView) v).toggle();
-	            SharedPreferences.Editor editor = s_settings.edit();
-			    editor.putBoolean("LoginAutomatically", ((CheckedTextView) v).isChecked());
-
-			    editor.commit();
-	        }
-	    });
-
 	}
 
-	/** Makes a short toast */
-	private void shortToast(String message)
-	{
-		CharSequence text = message;
-		int duration = Toast.LENGTH_SHORT;
-
-		Toast toast = Toast.makeText(this, text, duration);
-		toast.show();
-	}
 }

@@ -23,8 +23,7 @@ package com.martineve.mendroid;
 
 public class MendeleyURLs {
 	public static String BASE = "http://www.mendeley.com";
-	//public static String COLLECTIONS = "/oapi/library/";
-	public static String COLLECTIONS = "/oapi/stats/authors/";
+	public static String COLLECTIONS = "/oapi/library/collections/";
 	public static String CONTACTS = "/oapi/profiles";
 	public static String OAUTH_REQUEST = "/oauth/request_token/";
 	public static String OAUTH_ACCESS = "/oauth/access_token/";

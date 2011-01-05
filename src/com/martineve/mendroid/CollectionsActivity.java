@@ -43,7 +43,7 @@ public class CollectionsActivity extends Activity {
 
 		setContentView(R.layout.contacts);
 
-		if (!OAuth.CONNECTOR.isConnected())
+		/*if (!OAuth.CONNECTOR.isConnected())
 		{
 			moveToLogin();
 			return;
@@ -51,12 +51,10 @@ public class CollectionsActivity extends Activity {
 		
 		c_list.clear();
     
-    
-    
 		JSONArray contacts;
 		try {
-			//new MendeleyAPITask(OAuth.CONNECTOR).execute(MendeleyURLs.getURL(MendeleyURLs.CONTACTS), ContactsActivity.this);
-			new MendeleyAPITask(OAuth.CONNECTOR).doFetch(new String[] {MendeleyURLs.getURL(MendeleyURLs.COLLECTIONS)}, CollectionsActivity.this);
+			new MendeleyAPITask(OAuth.CONNECTOR).execute(new String[] {MendeleyURLs.getURL(MendeleyURLs.COLLECTIONS)}, CollectionsActivity.this);
+			//new MendeleyAPITask(OAuth.CONNECTOR).doFetch(new String[] {MendeleyURLs.getURL(MendeleyURLs.COLLECTIONS)}, CollectionsActivity.this);
             
 			
             /*contacts = m_conn.getCollections();
@@ -69,11 +67,11 @@ public class CollectionsActivity extends Activity {
                     item.put("line2", collection.getString("size") + " documents");
                     
                     m_list.add(item);
-            }*/
+            }*//*
 	    } catch (Exception e) {
 	            Toast.makeText(getApplicationContext(), "\nGot a " + e.getClass().getName() + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
 	            return;
-	    }
+	    }*/
 
 	}
 	

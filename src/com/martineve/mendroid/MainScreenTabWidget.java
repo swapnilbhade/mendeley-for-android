@@ -33,6 +33,7 @@ import android.widget.Toast;
 public class MainScreenTabWidget extends TabActivity {
 	
 	public void onCreate(Bundle savedInstanceState) {
+		//TODO: if no accounts, must redirect to creation page
 		super.onCreate(savedInstanceState);
 	    setContentView(R.layout.maintabs);
 	
@@ -66,40 +67,5 @@ public class MainScreenTabWidget extends TabActivity {
 	    tabHost.addTab(spec);*/
 	
 	    tabHost.setCurrentTab(1);
-	}
-	
-	@Override
-	protected void onResume()
-	{
-		// extract the OAUTH access token if it exists
-		Uri uri = this.getIntent().getData();
-		if(uri != null) {
-			ProgressDialog dialog = ProgressDialog.show(this, "", 
-					"Logging in to Mendeley, please wait...", true);
-
-			String PIN = uri.getQueryParameter("oauth_verifier");
-			if (!OAuth.CONNECTOR.setVerificationCode(PIN))
-			{
-				shortToast("Error logging in to Mendeley.");
-				dialog.cancel();
-			}
-			else
-			{
-				shortToast("Logged in to Mendeley.");
-				dialog.cancel();
-			}
-		}
-		
-		super.onResume();
-	}
-	
-	/** Makes a short toast */
-	private void shortToast(String message)
-	{
-		CharSequence text = message;
-		int duration = Toast.LENGTH_SHORT;
-
-		Toast toast = Toast.makeText(this, text, duration);
-		toast.show();
 	}
 }

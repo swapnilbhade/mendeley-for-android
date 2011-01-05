@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+      <PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+          <PreferenceCategory
+                  android:title="General Settings" />    
+          <PreferenceScreen
+              android:key="account_settings"
+              android:title="Account Settings"
+              android:summary="Sync frequency, notifications, etc.">
+              <intent
+                  android:action="com.martineve.MendeleyDroidLogin"
+                  android:targetPackage="com.martineve.mendroid"
+                  android:targetClass="com.martineve.mendroid.Preferences" />
+          </PreferenceScreen>
+      </PreferenceScreen>

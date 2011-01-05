@@ -44,13 +44,13 @@ public class ContactsActivity extends Activity {
 
 		setContentView(R.layout.contacts);
 
-		if (!OAuth.CONNECTOR.isConnected())
+		/*if (!OAuth.CONNECTOR.isConnected())
 		{
 			moveToLogin();
 			return;
 		}
 		
-		c_list.clear();
+		c_list.clear();*/
     
     
     

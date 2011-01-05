@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Mendeley</string>
-	<string name="login_text">Welcome to Mendeley for Android. To begin, you\'ll need to authorize Mendeley for Android to access your account data, by using the button below. This is performed using OAuth and Mendeley for Android will never see your Mendeley credentials.</string>
+	<string name="login_text">Welcome to Mendeley for Android. To begin, you\'ll need to add a Mendeley account. You will need to give this account a unique name for your own identification purposes.</string>
+	<string name="login_identifier_prompt">Account identifier: </string>
 	<string name="login_button_text">Login to Mendeley \>\></string>
 	<string name="auto_login_checkbox_text">Login automatically</string>
+	<string name="ACCOUNT_TYPE">com.martineve.mendroid.account</string>
+<string name="auth_success_text">Congratulations! Your Mendeley account is now authorized to this device.</string>
 </resources>

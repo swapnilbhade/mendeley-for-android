@@ -46,8 +46,8 @@ import java.net.URL;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
-import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
-import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
+//import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+//import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
@@ -78,6 +78,11 @@ public class MendeleyConnector {
 	
 
 	private OAuthProvider m_provider;
+	
+	public OAuthConsumer getConsumer()
+	{
+		return m_consumer;
+	}
 
 	public MendeleyConnector(Application androidApp) {
 		m_provider = new DefaultOAuthProvider(
@@ -102,13 +107,27 @@ public class MendeleyConnector {
 		
 		m_bAuthenticated = true;
 		
-		s_settings = a_app.getSharedPreferences(Settings.PREFS_NAME, 0);
+		try
+		{
+			s_settings = a_app.getSharedPreferences(Settings.PREFS_NAME, 0);
+		} catch (Exception e)
+		{
+			
+		}
 	}
 	
 	public String getMendeleyResponse(String strURL) throws Exception{
-		URL url = new URL(strURL + "consumer_key=" + m_consumerkey);
+		//URL url = new URL(strURL + "?consumer_key=" + m_consumerkey);
+		URL url = new URL(strURL);
 		HttpURLConnection request = (HttpURLConnection) url.openConnection();
-		m_consumer.sign(request);
+		
+		// for thread safety, create a temporary consumer
+		OAuthConsumer temp_consumer = new DefaultOAuthConsumer(
+				m_consumerkey,m_consumersecret);
+		
+		temp_consumer.setTokenWithSecret(m_consumer.getToken(), m_consumer.getTokenSecret());
+		
+		temp_consumer.sign(request);
 
 		request.connect();
 
@@ -125,13 +144,23 @@ public class MendeleyConnector {
 
 			return strResponse;
 		} else {
-			throw new Exception("Mendeley Server returned " + request.getResponseCode() + ": " + request.getResponseMessage());
+			String strResponse = "";
+			InputStreamReader in = new InputStreamReader((InputStream)request.getErrorStream());
+			BufferedReader buff = new BufferedReader(in);
+
+			for (String strLine = ""; strLine != null; strLine = buff.readLine()) {
+				strResponse += strLine + "\n";
+			}
+			
+			in.close();
+			
+			throw new Exception("Mendeley Server returned " + request.getResponseCode() + ": " + request.getResponseMessage() + strResponse);
 		}
 
 	}
 
-	public String getAuthenticationURL() throws Exception {
-		m_authURL = m_provider.retrieveRequestToken(m_consumer, OAuth.CALLBACKURL);
+	public String getAuthenticationURL(String accountName) throws Exception {
+		m_authURL = m_provider.retrieveRequestToken(m_consumer, OAuth.CALLBACKURL + "?acc_name=" + accountName);
 		return m_authURL;
 	}
 
