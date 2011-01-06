@@ -36,7 +36,7 @@
  *  
  */
 
-package com.martineve.mendroid;
+package com.martineve.mendroid.util;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -46,19 +46,13 @@ import java.net.URL;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
-//import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
-//import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthProvider;
-import oauth.signpost.exception.OAuthCommunicationException;
-import oauth.signpost.exception.OAuthExpectationFailedException;
-import oauth.signpost.exception.OAuthMessageSignerException;
-import oauth.signpost.exception.OAuthNotAuthorizedException;
-
-import org.json.JSONArray;
-
 import android.app.Application;
 import android.content.SharedPreferences;
+
+import com.martineve.mendroid.common.MendeleyURLs;
+import com.martineve.mendroid.common.OAuth;
 
 public class MendeleyConnector {
 

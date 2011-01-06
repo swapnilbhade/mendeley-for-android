@@ -19,26 +19,28 @@
  *  
  */
 
-package com.martineve.mendroid;
+package com.martineve.mendroid.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.widget.Button;
 import android.widget.TextView;
 
-public class AuthSuccess extends Activity {
+import com.martineve.mendroid.R;
+
+public class AuthFail extends Activity {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.authsuccess);
+		setContentView(R.layout.authfail);
 
+		
 		// setup the link in the credits box ;)
-		TextView credits = (TextView) findViewById(R.id.auth_success_credits);
-		credits.setText(Html.fromHtml("Copyright <a href=\"http://www.martineve.com\">Martin Paul Eve</a>, 2011"));
+		TextView credits = (TextView) findViewById(R.id.auth_fail_credits);
+		credits.setText(Html.fromHtml(getString(R.string.credit_text)));
 		credits.setMovementMethod(LinkMovementMethod.getInstance());
 		
 	}

@@ -19,10 +19,8 @@
  *  
  */
 
-package com.martineve.mendroid;
+package com.martineve.mendroid.util;
 
-import android.preference.PreferenceActivity;
-
-public class Preferences extends PreferenceActivity {
-
+public class Settings {
+    public static final String PREFS_NAME = "MendeleyPrefs";
 }

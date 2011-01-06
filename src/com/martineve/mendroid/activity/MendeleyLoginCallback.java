@@ -19,20 +19,21 @@
  *  
  */
 
-package com.martineve.mendroid;
+package com.martineve.mendroid.activity;
 
 import oauth.signpost.OAuthConsumer;
-import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
-import android.accounts.OnAccountsUpdateListener;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.EditText;
+
+import com.martineve.mendroid.R;
+import com.martineve.mendroid.common.Common;
+import com.martineve.mendroid.util.MendeleyConnector;
 
 public class MendeleyLoginCallback extends Activity {
 	
@@ -44,8 +45,17 @@ public class MendeleyLoginCallback extends Activity {
 	{
 		String strAuthURL;
 		try {
-			// TODO: get this dynamically from Intent bundle
-			strAuthURL = Common.login_connector.getAuthenticationURL("Martin Eve");
+			Bundle extras = getIntent().getExtras(); 
+			String user = extras.getString("user");
+			if(extras == null || user == null)
+			{
+				Common.longToast("There was a problem logging in to Mendley; the Login procedure should only be called by the authenticator.", this);
+				Log.e("MendeleyLoginCallback", "Either no Extras were, or no username was, passed to the Intent.");
+				
+				// TODO: move to fail
+				return;
+			}
+			strAuthURL = Common.login_connector.getAuthenticationURL(extras.getString("user"));
 
 			Intent i = new Intent(Intent.ACTION_VIEW);
 			i.setData(Uri.parse(strAuthURL));
@@ -53,6 +63,7 @@ public class MendeleyLoginCallback extends Activity {
 			startActivityForResult(i, 0);
 		} catch (Exception e) {
 			Common.longToast("Got exception while authenticating:\n" + e.getMessage(), this);
+			Log.e("MendeleyLoginCallback", "An error occurred getting the authentication URL", e);
 		}
 	}
 	

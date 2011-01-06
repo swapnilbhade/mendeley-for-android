@@ -19,17 +19,15 @@
  *  
  */
 
-package com.martineve.mendroid;
+package com.martineve.mendroid.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.json.JSONArray;
-
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
+
+import com.martineve.mendroid.R;
 
 
 
@@ -74,12 +72,4 @@ public class CollectionsActivity extends Activity {
 	    }*/
 
 	}
-	
-	/** Moves to the main screen */
-	private void moveToLogin()
-	{
-		Intent launchMain = new Intent(CollectionsActivity.this, MendeleyDroidLogin.class);
-        
-		startActivity(launchMain);
-	}  
 }

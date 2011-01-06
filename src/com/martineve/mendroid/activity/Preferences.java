@@ -1,6 +1,4 @@
-<?php
 /*
- *  
  *  Mendroid: a Mendeley Android client
  *  Copyright 2011 Martin Paul Eve <martin@martineve.com>
  *
@@ -20,11 +18,11 @@
  *  along with Mendroid.  If not, see <http://www.gnu.org/licenses/>.
  *  
  */
-if($_GET['oauth_verifier'] != "" && $_GET['acc_name'] != "") {
-   header( 'Location: mendeley-authcallback:///?acc_name=' . urlencode($_GET['acc_name']) .'&oauth_verifier=' . urlencode($_GET['oauth_verifier']) ) ;
+
+package com.martineve.mendroid.activity;
+
+import android.preference.PreferenceActivity;
+
+public class Preferences extends PreferenceActivity {
+
 }
-else
-{
-   header( 'Location: mendeley-authfail:///?acc_name=' . urlencode($_GET['acc_name'])) ;
-}
-?>

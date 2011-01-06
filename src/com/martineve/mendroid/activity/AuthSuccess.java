@@ -19,18 +19,28 @@
  *  
  */
 
-package com.martineve.mendroid;
+package com.martineve.mendroid.activity;
 
-public class MendeleyURLs {
-	public static String BASE = "http://www.mendeley.com";
-	public static String COLLECTIONS = "/oapi/library/collections/";
-	public static String CONTACTS = "/oapi/profiles";
-	public static String OAUTH_REQUEST = "/oauth/request_token/";
-	public static String OAUTH_ACCESS = "/oauth/access_token/";
-	public static String OAUTH_AUTHORIZE = "/oauth/authorize/";
-	
-	public static String getURL(String URLWithoutBase)
-	{
-		return BASE + URLWithoutBase;
+import android.app.Activity;
+import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.widget.TextView;
+
+import com.martineve.mendroid.R;
+
+public class AuthSuccess extends Activity {
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.authsuccess);
+
+		// setup the link in the credits box ;)
+		TextView credits = (TextView) findViewById(R.id.auth_success_credits);
+		credits.setText(Html.fromHtml(getString(R.string.credit_text)));
+		credits.setMovementMethod(LinkMovementMethod.getInstance());
+		
 	}
 }

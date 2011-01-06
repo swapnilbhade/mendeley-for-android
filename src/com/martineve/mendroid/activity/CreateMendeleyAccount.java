@@ -19,7 +19,7 @@
  *  
  */
 
-package com.martineve.mendroid;
+package com.martineve.mendroid.activity;
 
 
 import android.accounts.Account;
@@ -35,7 +35,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class MendeleyDroidLogin extends AccountAuthenticatorActivity implements OnClickListener {
+import com.martineve.mendroid.R;
+import com.martineve.mendroid.common.Common;
+
+public class CreateMendeleyAccount extends AccountAuthenticatorActivity implements OnClickListener {
 
 	String request_token;
 	
@@ -52,8 +55,6 @@ public class MendeleyDroidLogin extends AccountAuthenticatorActivity implements 
 			}
 			else
 			{			
-				am.invalidateAuthToken("com.martineve.mendroid.account", "77ba1bf8078fb955bebea33d80c5428804d24b693/19d2753c2f9e42ea91e73c04e59e43db");
-				
 				am.getAuthToken(account, "com.martineve.mendroid.account", null, this, null, null);
 			}
 		} catch (Exception e)
@@ -77,7 +78,7 @@ public class MendeleyDroidLogin extends AccountAuthenticatorActivity implements 
 
 		// setup the link in the credits box ;)
 		TextView credits = (TextView) findViewById(R.id.login_page_credits);
-		credits.setText(Html.fromHtml("Copyright <a href=\"http://www.martineve.com\">Martin Paul Eve</a>, 2011"));
+		credits.setText(Html.fromHtml(getString(R.string.credit_text)));
 		credits.setMovementMethod(LinkMovementMethod.getInstance());
 		
 	}

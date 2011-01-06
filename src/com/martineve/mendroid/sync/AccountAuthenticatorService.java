@@ -19,33 +19,22 @@
  *  
  */
 
-package com.martineve.mendroid;
+package com.martineve.mendroid.sync;
 
 
 import android.accounts.AbstractAccountAuthenticator;
-
 import android.accounts.Account;
-
 import android.accounts.AccountAuthenticatorResponse;
-
 import android.accounts.AccountManager;
-
 import android.accounts.NetworkErrorException;
-
-import android.app.ProgressDialog;
 import android.app.Service;
-
 import android.content.Context;
-
 import android.content.Intent;
-
-import android.net.Uri;
 import android.os.Bundle;
-
 import android.os.IBinder;
 
-import android.util.Log;
-import android.widget.EditText;
+import com.martineve.mendroid.activity.CreateMendeleyAccount;
+import com.martineve.mendroid.activity.MendeleyLoginCallback;
 
 
 
@@ -98,8 +87,8 @@ public class AccountAuthenticatorService extends Service {
 		throws NetworkErrorException {
 			Bundle reply = new Bundle();
 
-			Intent i = new Intent(mContext, MendeleyDroidLogin.class);
-			i.setAction("com.martineve.mendroid.MendeleyDroidLogin");
+			Intent i = new Intent(mContext, CreateMendeleyAccount.class);
+			i.setAction("com.martineve.mendroid.CreateMendeleyAccount");
 			
 			i.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 			reply.putParcelable(AccountManager.KEY_INTENT, i);
@@ -111,8 +100,8 @@ public class AccountAuthenticatorService extends Service {
 		public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account, Bundle options) {
 			Bundle reply = new Bundle();
 
-			Intent i = new Intent(mContext, MendeleyDroidLogin.class);
-			i.setAction("com.martineve.mendroid.MendeleyDroidLogin");
+			Intent i = new Intent(mContext, CreateMendeleyAccount.class);
+			i.setAction("com.martineve.mendroid.CreateMendeleyAccount");
 			
 			i.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 			reply.putParcelable(AccountManager.KEY_INTENT, i);
@@ -124,8 +113,8 @@ public class AccountAuthenticatorService extends Service {
 		public Bundle editProperties(AccountAuthenticatorResponse response, String accountType) {
 			Bundle reply = new Bundle();
 
-			Intent i = new Intent(mContext, MendeleyDroidLogin.class);
-			i.setAction("com.martineve.mendroid.MendeleyDroidLogin");
+			Intent i = new Intent(mContext, CreateMendeleyAccount.class);
+			i.setAction("com.martineve.mendroid.CreateMendeleyAccount");
 			
 			i.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 			reply.putParcelable(AccountManager.KEY_INTENT, i);
@@ -135,7 +124,6 @@ public class AccountAuthenticatorService extends Service {
 
 		@Override
 		public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException {
-			// TODO: this should attempt to refresh credentials without asking user, if fails, it should prompt
 			AccountManager am = AccountManager.get(mContext);
 			String user = account.name;
 
@@ -157,8 +145,8 @@ public class AccountAuthenticatorService extends Service {
 		public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features) throws NetworkErrorException {
 			Bundle reply = new Bundle();
 
-			Intent i = new Intent(mContext, MendeleyDroidLogin.class);
-			i.setAction("com.martineve.mendroid.MendeleyDroidLogin");
+			Intent i = new Intent(mContext, CreateMendeleyAccount.class);
+			i.setAction("com.martineve.mendroid.CreateMendeleyAccount");
 			
 			i.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 			reply.putParcelable(AccountManager.KEY_INTENT, i);
@@ -170,8 +158,8 @@ public class AccountAuthenticatorService extends Service {
 		public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) {
 			Bundle reply = new Bundle();
 
-			Intent i = new Intent(mContext, MendeleyDroidLogin.class);
-			i.setAction("com.martineve.mendroid.MendeleyDroidLogin");
+			Intent i = new Intent(mContext, CreateMendeleyAccount.class);
+			i.setAction("com.martineve.mendroid.CreateMendeleyAccount");
 			
 			i.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 			reply.putParcelable(AccountManager.KEY_INTENT, i);

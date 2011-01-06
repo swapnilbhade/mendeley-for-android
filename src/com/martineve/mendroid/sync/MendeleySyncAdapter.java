@@ -19,7 +19,7 @@
  *  
  */
 
-package com.martineve.mendroid;
+package com.martineve.mendroid.sync;
 
 import java.io.IOException;
 
@@ -40,6 +40,8 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.martineve.mendroid.util.MendeleyConnector;
 
 
 public class MendeleySyncAdapter extends Service {

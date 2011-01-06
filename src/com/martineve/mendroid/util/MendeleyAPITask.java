@@ -19,7 +19,7 @@
  *  
  */
 
-package com.martineve.mendroid;
+package com.martineve.mendroid.util;
 
 import java.net.URL;
 import org.json.JSONArray;

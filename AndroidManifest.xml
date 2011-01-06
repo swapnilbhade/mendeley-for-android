@@ -1,65 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.martineve.mendroid"
-      android:versionCode="1"
-      android:versionName="1.0">
-    <application android:icon="@drawable/ic_launcher_mendroid" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar">
-        <activity android:label="@string/app_name" android:name=".MendeleyDroidLogin">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-            	<action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".MendeleyLoginCallback" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar">
-        	<intent-filter>
-            	<action android:name="android.intent.action.VIEW" />
-            	<category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="martineve-mendroid"/>
-            </intent-filter>
-        </activity>
-        <activity android:name=".MainScreenTabWidget" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar">
-        	<intent-filter>
-            	<action android:name="android.intent.action.VIEW" />
-            	<category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-            </intent-filter>
-        </activity>
-      	<service android:name="AccountAuthenticatorService" android:exported="true" android:process=":auth">
-   			<intent-filter>
+	package="com.martineve.mendroid" android:versionCode="1"
+	android:versionName="1.0">
+
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+	<uses-permission android:name="android.permission.USE_CREDENTIALS" />
+	<uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+	<application android:icon="@drawable/ic_launcher_mendroid"
+		android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar">
+		<activity android:name="MendeleyForAndroid" android:label="@string/app_name"
+			android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+			</intent-filter>
+		</activity>
+		<activity android:label="@string/app_name" android:name=".activity.CreateMendeleyAccount">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".activity.MendeleyLoginCallback"
+			android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="mendeley-authcallback" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".activity.AuthFail" android:label="@string/app_name"
+			android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="mendeley-authfail" />
+			</intent-filter>
+		</activity>
+		
+		
+		<service android:name=".sync.AccountAuthenticatorService"
+			android:exported="true" android:process=":auth">
+			<intent-filter>
 				<action android:name="android.accounts.AccountAuthenticator" />
-       		</intent-filter>
-       		<meta-data android:name="android.accounts.AccountAuthenticator"
-        							android:resource="@xml/authenticator" />
-      	</service>
-      <service android:name=".MendeleySyncAdapter"
-       								android:exported="true" android:process=":contacts">
-       <intent-filter>
-       		<action android:name="android.content.SyncAdapter" />
-       </intent-filter>
-       <meta-data android:name="android.content.SyncAdapter"
-   									android:resource="@xml/sync_mendeley" />
-      </service>
-      	
-        <activity android:name=".ContactsActivity" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar"></activity>
-        <activity android:name=".CollectionsActivity" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar"></activity>
-        <activity android:name=".AuthSuccess" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar"></activity>
-    </application>
+			</intent-filter>
+			<meta-data android:name="android.accounts.AccountAuthenticator"
+				android:resource="@xml/authenticator" />
+		</service>
+		<service android:name=".sync.MendeleySyncAdapter"
+			android:exported="true" android:process=":contacts">
+			<intent-filter>
+				<action android:name="android.content.SyncAdapter" />
+			</intent-filter>
+			<meta-data android:name="android.content.SyncAdapter"
+				android:resource="@xml/sync_mendeley" />
+		</service>
 
+		<activity android:name=".activity.ContactsActivity"
+			android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar"></activity>
+		<activity android:name=".activity.CollectionsActivity"
+			android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar"></activity>
+		<activity android:name=".activity.AuthSuccess" android:label="@string/app_name"
+			android:theme="@android:style/Theme.NoTitleBar"></activity>
+	</application>
 
-<uses-permission
-        android:name="android.permission.INTERNET" />
-<uses-permission
-		android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-<uses-permission
-		android:name="android.permission.USE_CREDENTIALS" />
-<uses-permission
-		android:name="android.permission.MANAGE_ACCOUNTS" />
-<uses-permission
-		android:name="android.permission.GET_ACCOUNTS" />
 </manifest> 

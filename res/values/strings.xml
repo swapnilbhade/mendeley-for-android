@@ -3,8 +3,10 @@
     <string name="app_name">Mendeley</string>
 	<string name="login_text">Welcome to Mendeley for Android. To begin, you\'ll need to add a Mendeley account. You will need to give this account a unique name for your own identification purposes.</string>
 	<string name="login_identifier_prompt">Account identifier: </string>
-	<string name="login_button_text">Login to Mendeley \>\></string>
+	<string name="login_button_text">Login to Mendeley &gt;&gt;</string>
 	<string name="auto_login_checkbox_text">Login automatically</string>
 	<string name="ACCOUNT_TYPE">com.martineve.mendroid.account</string>
 <string name="auth_success_text">Congratulations! Your Mendeley account is now authorized to this device.</string>
+<string name="auth_fail_text">Your Mendeley account was not authorized to this device, seemingly through user choice.</string>
+<string name="credit_text">Copyright &lt;a href=\&quot;http://www.martineve.com\&quot;&gt;Martin Paul Eve&lt;/a&gt;, 2011</string>
 </resources>

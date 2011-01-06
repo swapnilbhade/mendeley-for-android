@@ -18,20 +18,36 @@
  *  along with Mendroid.  If not, see <http://www.gnu.org/licenses/>.
  *  
  */
-package com.martineve.mendroid;
+package com.martineve.mendroid.common;
 
+import com.martineve.mendroid.util.MendeleyConnector;
+
+import android.accounts.AccountAuthenticatorResponse;
 import android.content.Context;
+import android.widget.Toast;
 
-public class AppContextProvider extends android.app.Application {
+public class Common {
+	
+	public static AccountAuthenticatorResponse response;
+	public static MendeleyConnector login_connector;
 
-	private static AppContextProvider instance;
+	/** Makes a short toast */
+	public static void shortToast(String message, Context context)
+	{
+		CharSequence text = message;
+		int duration = Toast.LENGTH_SHORT;
 
-	public AppContextProvider() {
-		instance = this;
+		Toast toast = Toast.makeText(context, text, duration);
+		toast.show();
 	}
+	
+	/** Makes a long toast */
+	public static void longToast(String message, Context context)
+	{
+		CharSequence text = message;
+		int duration = Toast.LENGTH_LONG;
 
-	public static Context getContext() {
-		return instance;
+		Toast toast = Toast.makeText(context, text, duration);
+		toast.show();
 	}
-
 }

@@ -19,7 +19,7 @@
  *  
  */
 
-package com.martineve.mendroid;
+package com.martineve.mendroid.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,10 +27,10 @@ import java.util.HashMap;
 import org.json.JSONArray;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.martineve.mendroid.R;
 
 
 
@@ -77,12 +77,5 @@ public class ContactsActivity extends Activity {
 	    }
 
 	}
-	
-	/** Moves to the main screen */
-	private void moveToLogin()
-	{
-		Intent launchMain = new Intent(ContactsActivity.this, MendeleyDroidLogin.class);
-        
-		startActivity(launchMain);
-	}  
+
 }
