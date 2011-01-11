@@ -81,7 +81,7 @@ public class MendeleyForAndroid extends TabActivity {
 		// Do the same for the other tabs
 		intent = new Intent().setClass(this, CollectionsActivity.class);
 		spec = tabHost.newTabSpec("collections").setIndicator("Collections",
-				res.getDrawable(R.drawable.ic_tab_allfriends))
+				res.getDrawable(R.drawable.ic_tab_archive))
 				.setContent(intent);
 		tabHost.addTab(spec);
 
