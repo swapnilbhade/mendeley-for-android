@@ -60,8 +60,16 @@ public class MendeleyContentProvider extends ContentProvider {
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		// TODO Auto-generated method stub
-		return 0;
+		switch (uriMatcher.match(uri)){
+		case COLLECTIONS:
+			// delete all collections
+			DB.delete("collections", null, null);
+			return 1;
+		default:
+			IllegalArgumentException e = new IllegalArgumentException("Unsupported URI: " + uri);
+			Log.e("com.martineve.mendroid.data.MendeleyContentProvider", "Unsupported content type requested.");
+			throw e;
+		} 
 	}
 
 	@Override

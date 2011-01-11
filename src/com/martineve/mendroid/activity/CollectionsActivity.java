@@ -25,13 +25,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Activity;
+import android.app.ListActivity;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.widget.ListAdapter;
+import android.widget.SimpleCursorAdapter;
 
 import com.martineve.mendroid.R;
+import com.martineve.mendroid.data.MendeleyContentProvider;
+import com.martineve.mendroid.data.MendeleyDatabase;
 
-
-
-public class CollectionsActivity extends Activity {
+public class CollectionsActivity extends ListActivity {
 	ArrayList<HashMap<String,String>> c_list = new ArrayList<HashMap<String,String>>();  
 	
 	/** Called when the activity is first created. */
@@ -39,37 +43,15 @@ public class CollectionsActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.contacts);
+		setContentView(R.layout.collections);
 
-		/*if (!OAuth.CONNECTOR.isConnected())
-		{
-			moveToLogin();
-			return;
-		}
+		Cursor c = managedQuery(MendeleyContentProvider.COLLECTIONS_URI, null, null, null, MendeleyDatabase.COLLECTION_NAME + " asc");
+
+		String[] from = new String[] {MendeleyDatabase.COLLECTION_NAME, MendeleyDatabase.COLLECTION_SIZE};
 		
-		c_list.clear();
-    
-		JSONArray contacts;
-		try {
-			new MendeleyAPITask(OAuth.CONNECTOR).execute(new String[] {MendeleyURLs.getURL(MendeleyURLs.COLLECTIONS)}, CollectionsActivity.this);
-			//new MendeleyAPITask(OAuth.CONNECTOR).doFetch(new String[] {MendeleyURLs.getURL(MendeleyURLs.COLLECTIONS)}, CollectionsActivity.this);
-            
-			
-            /*contacts = m_conn.getCollections();
-            for (int i=0; i< collections.length(); i++) {
-                    JSONObject collection = collections.getJSONObject(i);
-                    
-                    HashMap<String,String> item = new HashMap<String,String>();
-                    
-                    item.put("line1", collection.getString("name"));
-                    item.put("line2", collection.getString("size") + " documents");
-                    
-                    m_list.add(item);
-            }*//*
-	    } catch (Exception e) {
-	            Toast.makeText(getApplicationContext(), "\nGot a " + e.getClass().getName() + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
-	            return;
-	    }*/
-
+		int[] to = new int[] { R.id.collection_entry, R.id.collection_size };
+		
+		ListAdapter adapter = new SimpleCursorAdapter(this, R.layout.collection_item, c, from, to);
+		this.setListAdapter(adapter);
 	}
 }

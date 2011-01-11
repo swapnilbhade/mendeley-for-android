@@ -114,7 +114,7 @@ public class MendeleySyncAdapter extends Service {
 
 		@Override
 		public void run(AccountManagerFuture<Bundle> arg0) {
-			try {
+			try {			
 				// this is where the accesstoken callback lands
 				String accessToken = arg0.getResult().getString(AccountManager.KEY_AUTHTOKEN);
 				
@@ -135,7 +135,8 @@ public class MendeleySyncAdapter extends Service {
 					
 					int collection_count = collections.length();
 					
-					// TODO: now delete all existing collections
+					// delete all existing collections
+					mContentResolver.delete(MendeleyContentProvider.COLLECTIONS_URI, null, null);
 					
 					// now re-add
 					for(int i = 0; i < collection_count; i++)
@@ -161,9 +162,6 @@ public class MendeleySyncAdapter extends Service {
 					e.printStackTrace();
 				}
 				
-				
-				//AccountManager am = AccountManager.get(a_app);
-				//am.invalidateAuthToken("com.martineve.mendroid.account", accessToken);
 			} catch (OperationCanceledException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
