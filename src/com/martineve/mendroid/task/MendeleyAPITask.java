@@ -19,16 +19,17 @@
  *  
  */
 
-package com.martineve.mendroid.util;
+package com.martineve.mendroid.task;
 
-import java.net.URL;
 import org.json.JSONArray;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Debug;
 import android.widget.Toast;
+
+import com.martineve.mendroid.util.MendeleyConnector;
 
 public class MendeleyAPITask extends AsyncTask<Object, Integer, JSONArray[]> {
 	
@@ -50,6 +51,8 @@ public class MendeleyAPITask extends AsyncTask<Object, Integer, JSONArray[]> {
 	
 	public JSONArray[] doFetch(Object... params)
 	{
+		Debug.waitForDebugger();
+		
 		// first param is a string[]
 		String[] urls = (String[])params[0];
 		
@@ -66,6 +69,7 @@ public class MendeleyAPITask extends AsyncTask<Object, Integer, JSONArray[]> {
 				ret[i] = new JSONArray(strResponse);
 				publishProgress((int) ((i / (float) count) * 100));
 			} catch (Exception e) {
+				// looks like the consumer key needs revalidating
 				e_exception = e;
 				publishProgress(-1);
 				return null;
@@ -89,14 +93,12 @@ public class MendeleyAPITask extends AsyncTask<Object, Integer, JSONArray[]> {
 	protected void onPreExecute()
 	{
 		// invoked on the UI thread
-		//d_progress = ProgressDialog.show(c_context, "", 
-                //"Communicating with Mendeley, please wait...", false);
+
 	}
 	
 	@Override
 	protected void onPostExecute(JSONArray[] result) {
 		// invoked on the UI thread
-        //d_progress.cancel();
         
         if (result == null)
         {

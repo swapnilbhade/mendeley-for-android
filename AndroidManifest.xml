@@ -59,7 +59,7 @@
 				android:resource="@xml/authenticator" />
 		</service>
 		<service android:name=".sync.MendeleySyncAdapter"
-			android:exported="true" android:process=":contacts">
+			android:exported="true">
 			<intent-filter>
 				<action android:name="android.content.SyncAdapter" />
 			</intent-filter>
@@ -73,6 +73,10 @@
 			android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar"></activity>
 		<activity android:name=".activity.AuthSuccess" android:label="@string/app_name"
 			android:theme="@android:style/Theme.NoTitleBar"></activity>
+			
+		<provider android:name=".data.MendeleyContentProvider"
+         android:authorities="com.martineve.mendroid.data.mendeleycontentprovider" />  
+			
 	</application>
 
 </manifest> 

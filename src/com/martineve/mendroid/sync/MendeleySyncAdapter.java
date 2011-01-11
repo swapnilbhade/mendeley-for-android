@@ -22,6 +22,11 @@
 package com.martineve.mendroid.sync;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -34,13 +39,19 @@ import android.app.Service;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SyncResult;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.martineve.mendroid.common.MendeleyURLs;
+import com.martineve.mendroid.data.MendeleyContentProvider;
+import com.martineve.mendroid.data.MendeleyDatabase;
+import com.martineve.mendroid.task.MendeleyAPITask;
 import com.martineve.mendroid.util.MendeleyConnector;
 
 
@@ -99,16 +110,60 @@ public class MendeleySyncAdapter extends Service {
 		{
 			a_app = app;
 		}
+			
 
 		@Override
 		public void run(AccountManagerFuture<Bundle> arg0) {
 			try {
+				// this is where the accesstoken callback lands
 				String accessToken = arg0.getResult().getString(AccountManager.KEY_AUTHTOKEN);
-				AccountManager am = AccountManager.get(a_app);
-				am.invalidateAuthToken("com.martineve.mendroid.account", accessToken);
-				String s = "thecallback";
-				s = "123";
-				String y = s;
+				
+				String[] aTSplit = accessToken.split("/");
+				
+				// now go through each of the sync items
+				MendeleyConnector m_connect = new MendeleyConnector(a_app, aTSplit[0], aTSplit[1]);
+				MendeleyAPITask apit = new MendeleyAPITask(m_connect);
+				
+				// COLLECTIONS
+				
+				// TODO: firstly, iterate over all database columns with sync_up = true and add to server
+				
+				apit.execute(new String[] {MendeleyURLs.getURL(MendeleyURLs.COLLECTIONS)}, a_app);
+				try {
+					Object o = apit.get()[0];
+					JSONArray collections = (JSONArray)o;
+					
+					int collection_count = collections.length();
+					
+					// TODO: now delete all existing collections
+					
+					// now re-add
+					for(int i = 0; i < collection_count; i++)
+					{
+						JSONObject newCollection = collections.getJSONObject(i);
+						int id = newCollection.getInt("id");
+						String name = newCollection.getString("name");
+						String type = newCollection.getString("type");
+						int size = newCollection.getInt("size");
+						
+						MendeleyDatabase.insertCollection(id, name, type, size, false, mContentResolver);
+					}
+					
+					
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+				//AccountManager am = AccountManager.get(a_app);
+				//am.invalidateAuthToken("com.martineve.mendroid.account", accessToken);
 			} catch (OperationCanceledException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -128,18 +183,12 @@ public class MendeleySyncAdapter extends Service {
 	throws OperationCanceledException {
 		mContentResolver = context.getContentResolver();
 		Log.i(TAG, "performSync: " + account.toString());
-
-		//This is where the magic will happen!		a
-		MendeleyConnector m_connect = new MendeleyConnector(app);
 		
 		AccountManager am = AccountManager.get(app);
-		
-		am.invalidateAuthToken("com.martineve.mendroid.account", "77ba1bf8078fb955bebea33d80c5428804d24b693/19d2753c2f9e42ea91e73c04e59e43db");
 		
 		AccountManagerCB AMC = new AccountManagerCB(app); 
 		
 		am.getAuthToken(account, "com.martineve.mendroid.account", true, AMC, null);
-
 	}
 	
 
