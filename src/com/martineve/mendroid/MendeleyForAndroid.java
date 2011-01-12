@@ -61,6 +61,7 @@ public class MendeleyForAndroid extends TabActivity {
 		}
 
 
+		Log.i("com.martineve.mendroid.MendeleyForAndroid", "Initializing main window.");
 		setContentView(R.layout.maintabs);
 
 		Resources res = getResources(); // resource object to get Drawables
@@ -85,13 +86,7 @@ public class MendeleyForAndroid extends TabActivity {
 				.setContent(intent);
 		tabHost.addTab(spec);
 
-		/*
-	    intent = new Intent().setClass(this, SongsActivity.class);
-	    spec = tabHost.newTabSpec("songs").setIndicator("Songs",
-	                      res.getDrawable(R.drawable.ic_tab_songs))
-	                  .setContent(intent);
-	    tabHost.addTab(spec);*/
-
+		// set the current tab to Collections
 		tabHost.setCurrentTab(1);
 	}
 }

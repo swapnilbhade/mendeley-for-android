@@ -63,6 +63,7 @@ public class MendeleyContentProvider extends ContentProvider {
 		switch (uriMatcher.match(uri)){
 		case COLLECTIONS:
 			// delete all collections
+			Log.i("com.martineve.mendroid.data.MendeleyContentProvider", "Deleting collections table.");
 			DB.delete("collections", null, null);
 			return 1;
 		default:
@@ -75,8 +76,8 @@ public class MendeleyContentProvider extends ContentProvider {
 	@Override
 	public String getType(Uri uri) {
 		switch (uriMatcher.match(uri)){
-		//---get all collections---
 		case COLLECTIONS:
+			Log.i("com.martineve.mendroid.data.MendeleyContentProvider", "Returning content type of mendroid.collections.");
 			return "vnd.android.cursor.dir/vnd.martineve.mendroid.collections";
 		default:
 			IllegalArgumentException e = new IllegalArgumentException("Unsupported URI: " + uri);
@@ -93,7 +94,6 @@ public class MendeleyContentProvider extends ContentProvider {
 		String DATABASE_TABLE;
 
 		switch (uriMatcher.match(uri)){
-		//---get all collections---
 		case COLLECTIONS:
 			DATABASE_TABLE="COLLECTIONS";
 			break;
@@ -109,10 +109,14 @@ public class MendeleyContentProvider extends ContentProvider {
 		{
 			Uri _uri = ContentUris.withAppendedId(COLLECTION_URI, rowID);
 			getContext().getContentResolver().notifyChange(_uri, null);    
+			Log.i("com.martineve.mendroid.data.MendeleyContentProvider", "Inserted row [" + values + "] into " + uri + ".");
 			return _uri;                
 		}        
-		throw new SQLException("Failed to insert row into " + uri);
+		
+		SQLException e = new SQLException("Failed to insert row into " + uri);
+		Log.e("com.martineve.mendroid.data.MendeleyContentProvider", "Failed to insert row [" + values + "] into Collections table.", e);
 
+		throw e;
 	}
 
 	@Override

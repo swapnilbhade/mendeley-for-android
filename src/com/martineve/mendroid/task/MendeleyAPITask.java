@@ -27,6 +27,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Debug;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.martineve.mendroid.util.MendeleyConnector;
@@ -51,6 +52,7 @@ public class MendeleyAPITask extends AsyncTask<Object, Integer, JSONArray[]> {
 	
 	public JSONArray[] doFetch(Object... params)
 	{
+		// TODO: remove this line when ready
 		Debug.waitForDebugger();
 		
 		// first param is a string[]
@@ -61,17 +63,20 @@ public class MendeleyAPITask extends AsyncTask<Object, Integer, JSONArray[]> {
 		
 		int count = urls.length;
 		JSONArray[] ret = new JSONArray[count];
-		//((ProgressDialog)d_progress).setMax(count * 100);
+
         
         for (int i = 0; i < count; i++) {
         	try {
+        		Log.i("com.martineve.mendroid.task.MendeleyAPITask", "Executing API call: " + urls[i]);
+        		
 				String strResponse = m_connect.getMendeleyResponse(urls[i]);
 				ret[i] = new JSONArray(strResponse);
-				publishProgress((int) ((i / (float) count) * 100));
+				
+				Log.i("com.martineve.mendroid.task.MendeleyAPITask", "Succesfully retrieved API call: " + urls[i]);
+				
 			} catch (Exception e) {
-				// looks like the consumer key needs revalidating
-				e_exception = e;
-				publishProgress(-1);
+				// TODO: determine if this is due to needing re-auth
+				Log.e("com.martineve.mendroid.task.MendeleyAPITask", "Failed to execute API call: " + urls[i], e);
 				return null;
 			}
             publishProgress((int) ((i / (float) count) * 100));
@@ -80,21 +85,6 @@ public class MendeleyAPITask extends AsyncTask<Object, Integer, JSONArray[]> {
         return ret;
 	}
 	
-	@Override
-	protected void onProgressUpdate(Integer... progress) {
-        if (progress[0] == -1)
-        {
-        	Toast.makeText(c_context, "\nGot a " + e_exception.getClass().getName() + ": " + e_exception.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
-
-	
-	@Override
-	protected void onPreExecute()
-	{
-		// invoked on the UI thread
-
-	}
 	
 	@Override
 	protected void onPostExecute(JSONArray[] result) {
@@ -102,6 +92,8 @@ public class MendeleyAPITask extends AsyncTask<Object, Integer, JSONArray[]> {
         
         if (result == null)
         {
+        	Log.e("com.martineve.mendroid.task.MendeleyAPITask", "Returned NULL; looks like a problem communicating with Mendeley; review stack trace.");
+        	
         	// there was an error
         	CharSequence text = "Error communicating with Mendeley.";
         	int duration = Toast.LENGTH_LONG;

@@ -115,9 +115,12 @@ public class MendeleySyncAdapter extends Service {
 		@Override
 		public void run(AccountManagerFuture<Bundle> arg0) {
 			try {			
+				Log.i("com.martineve.mendroid.sync.MendeleySyncAdapter", "Received access token callback.");
+				
 				// this is where the accesstoken callback lands
 				String accessToken = arg0.getResult().getString(AccountManager.KEY_AUTHTOKEN);
 				
+				Log.i("com.martineve.mendroid.data.MendeleySyncAdapter", "Parsing access token.");
 				String[] aTSplit = accessToken.split("/");
 				
 				// now go through each of the sync items
@@ -128,6 +131,7 @@ public class MendeleySyncAdapter extends Service {
 				
 				// TODO: firstly, iterate over all database columns with sync_up = true and add to server
 				
+				Log.i("com.martineve.mendroid.sync.MendeleySyncAdapter", "Asking API for collections.");
 				apit.execute(new String[] {MendeleyURLs.getURL(MendeleyURLs.COLLECTIONS)}, a_app);
 				try {
 					Object o = apit.get()[0];
@@ -179,13 +183,15 @@ public class MendeleySyncAdapter extends Service {
 	private static void performSync(Context context, Application app, Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult)
 
 	throws OperationCanceledException {
+		Log.i("com.martineve.mendroid.MendeleyForAndroid", "Performing sync for account: " + account.toString());
+		
 		mContentResolver = context.getContentResolver();
-		Log.i(TAG, "performSync: " + account.toString());
 		
 		AccountManager am = AccountManager.get(app);
 		
 		AccountManagerCB AMC = new AccountManagerCB(app); 
 		
+		Log.i("com.martineve.mendroid.sync.MendeleyForAndroid", "Retrieving auth token.");
 		am.getAuthToken(account, "com.martineve.mendroid.account", true, AMC, null);
 	}
 	
