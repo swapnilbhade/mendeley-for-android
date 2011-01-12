@@ -47,9 +47,9 @@ public class CollectionsActivity extends ListActivity {
 
 		Cursor c = managedQuery(MendeleyContentProvider.COLLECTIONS_URI, null, null, null, MendeleyDatabase.COLLECTION_NAME + " asc");
 
-		String[] from = new String[] {MendeleyDatabase.COLLECTION_NAME, MendeleyDatabase.COLLECTION_SIZE};
+		String[] from = new String[] {MendeleyDatabase.COLLECTION_NAME, MendeleyDatabase.COLLECTION_SIZE, MendeleyDatabase.COLLECTION_TYPE};
 		
-		int[] to = new int[] { R.id.collection_entry, R.id.collection_size };
+		int[] to = new int[] { R.id.collection_entry, R.id.collection_size, R.id.collection_private_status };
 		
 		ListAdapter adapter = new SimpleCursorAdapter(this, R.layout.collection_item, c, from, to);
 		this.setListAdapter(adapter);

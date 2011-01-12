@@ -24,5 +24,27 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textSize="10dip" />
+		<TextView
+			android:layout_below="@id/collection_entry"
+			android:layout_toRightOf="@id/collection_size_label_post"
+			android:id="@+id/collection_pre_private_status"
+			android:text=" ("
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="10dip" />
+		<TextView
+			android:layout_below="@id/collection_entry"
+			android:layout_toRightOf="@id/collection_pre_private_status"
+			android:id="@+id/collection_private_status"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="10dip" />
+		<TextView
+			android:layout_below="@id/collection_entry"
+			android:layout_toRightOf="@id/collection_private_status"
+			android:id="@+id/collection_post_private_status"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="10dip" />
 </RelativeLayout>
 
