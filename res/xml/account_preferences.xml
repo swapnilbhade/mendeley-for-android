@@ -8,8 +8,8 @@
               android:title="Account Settings"
               android:summary="Sync frequency, notifications, etc.">
               <intent
-                  android:action="com.martineve.CreateMendeleyAccount"
+                  android:action="android.intent.action.VIEW"
                   android:targetPackage="com.martineve.mendroid"
-                  android:targetClass="com.martineve.mendroid.Preferences" />
+                  android:targetClass="com.martineve.mendroid.activity.Preferences" />
           </PreferenceScreen>
       </PreferenceScreen>

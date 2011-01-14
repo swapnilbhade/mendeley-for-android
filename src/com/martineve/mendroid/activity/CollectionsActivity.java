@@ -32,7 +32,7 @@ import android.widget.ListAdapter;
 import android.widget.SimpleCursorAdapter;
 
 import com.martineve.mendroid.R;
-import com.martineve.mendroid.data.MendeleyContentProvider;
+import com.martineve.mendroid.data.MendeleyCollectionsProvider;
 import com.martineve.mendroid.data.MendeleyDatabase;
 
 public class CollectionsActivity extends ListActivity {
@@ -45,7 +45,7 @@ public class CollectionsActivity extends ListActivity {
 
 		setContentView(R.layout.collections);
 
-		Cursor c = managedQuery(MendeleyContentProvider.COLLECTIONS_URI, null, null, null, MendeleyDatabase.COLLECTION_NAME + " asc");
+		Cursor c = managedQuery(MendeleyCollectionsProvider.COLLECTIONS_URI, null, null, null, MendeleyDatabase.COLLECTION_NAME + " asc");
 
 		String[] from = new String[] {MendeleyDatabase.COLLECTION_NAME, MendeleyDatabase.COLLECTION_SIZE, MendeleyDatabase.COLLECTION_TYPE};
 		

@@ -21,8 +21,44 @@
 
 package com.martineve.mendroid.activity;
 
+import com.martineve.mendroid.R;
+import com.martineve.mendroid.sync.AccountAuthenticatorService;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 
 public class Preferences extends PreferenceActivity {
+	private boolean shouldForceSync = false;
+	
+	@Override
+	protected void onCreate(Bundle icicle) {
+		super.onCreate(icicle);
+		
+		addPreferencesFromResource(R.xml.preferences_sync);
+		findPreference("sync_collections").setOnPreferenceChangeListener(syncToggle);
+	}
 
+	@Override
+	public void onPause() {
+		super.onPause();
+		if(shouldForceSync) {
+			//AccountAuthenticatorService.resyncAccount(this);
+			// some kind of sync here
+		}
+	}
+
+	Preference.OnPreferenceChangeListener syncToggle = new Preference.OnPreferenceChangeListener() {
+		public boolean onPreferenceChange(Preference preference, Object newValue) {
+			shouldForceSync = true;
+			return true;
+		}
+	};
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+	}
 }

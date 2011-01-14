@@ -22,6 +22,9 @@
 package com.martineve.mendroid.sync;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 
 import org.json.JSONArray;
@@ -42,6 +45,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SyncAdapterType;
 import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Bundle;
@@ -49,7 +53,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.martineve.mendroid.common.MendeleyURLs;
-import com.martineve.mendroid.data.MendeleyContentProvider;
+import com.martineve.mendroid.data.MendeleyCollectionsProvider;
 import com.martineve.mendroid.data.MendeleyDatabase;
 import com.martineve.mendroid.task.MendeleyAPITask;
 import com.martineve.mendroid.util.MendeleyConnector;
@@ -140,7 +144,7 @@ public class MendeleySyncAdapter extends Service {
 					int collection_count = collections.length();
 					
 					// delete all existing collections
-					mContentResolver.delete(MendeleyContentProvider.COLLECTIONS_URI, null, null);
+					mContentResolver.delete(MendeleyCollectionsProvider.COLLECTIONS_URI, null, null);
 					
 					// now re-add
 					for(int i = 0; i < collection_count; i++)
@@ -183,6 +187,7 @@ public class MendeleySyncAdapter extends Service {
 	private static void performSync(Context context, Application app, Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult)
 
 	throws OperationCanceledException {
+		
 		Log.i("com.martineve.mendroid.MendeleyForAndroid", "Performing sync for account: " + account.toString());
 		
 		mContentResolver = context.getContentResolver();
@@ -194,7 +199,7 @@ public class MendeleySyncAdapter extends Service {
 		Log.i("com.martineve.mendroid.sync.MendeleyForAndroid", "Retrieving auth token.");
 		am.getAuthToken(account, "com.martineve.mendroid.account", true, AMC, null);
 	}
-	
+		
 
 
 }

@@ -24,6 +24,7 @@ package com.martineve.mendroid;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.TabActivity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -52,6 +53,9 @@ public class MendeleyForAndroid extends TabActivity {
 				Intent launchMain = new Intent(MendeleyForAndroid.this, CreateMendeleyAccount.class);
 				startActivity(launchMain);
 				finish();
+			} else {
+				ContentResolver.setIsSyncable(a[0], "com.martineve.mendroid.data.mendeleycollectionsprovider", 1);
+
 			}
 		} catch (Exception e)
 		{

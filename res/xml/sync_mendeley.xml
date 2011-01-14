@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
       <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
-          android:contentAuthority="com.martineve.mendroid.data.mendeleycontentprovider"
-          android:accountType="com.martineve.mendroid.account"/>
+          android:contentAuthority="com.martineve.mendroid.data.mendeleycollectionsprovider"
+          android:accountType="com.martineve.mendroid.account"
+          android:supportsUploading="true"
+		  android:userVisible="true"/>

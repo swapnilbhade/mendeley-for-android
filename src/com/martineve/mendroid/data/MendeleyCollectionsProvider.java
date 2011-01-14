@@ -19,9 +19,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class MendeleyContentProvider extends ContentProvider {
+public class MendeleyCollectionsProvider extends ContentProvider {
 
-	private static String PROVIDER_NAME = "com.martineve.mendroid.data.mendeleycontentprovider";
+	private static String PROVIDER_NAME = "com.martineve.mendroid.data.mendeleycollectionsprovider";
 
 	public static final Uri CONTENT_URI = Uri.parse("content://" + PROVIDER_NAME + "/");
 	public static final Uri COLLECTIONS_URI = Uri.parse("content://" + PROVIDER_NAME + "/collections");
@@ -32,7 +32,7 @@ public class MendeleyContentProvider extends ContentProvider {
 	private SQLiteDatabase DB;
 	private AsyncTask<SQLiteOpenHelper, Void, SQLiteDatabase> DBFetcher;
 
-	public MendeleyContentProvider()
+	public MendeleyCollectionsProvider()
 	{
 
 	}
@@ -63,12 +63,12 @@ public class MendeleyContentProvider extends ContentProvider {
 		switch (uriMatcher.match(uri)){
 		case COLLECTIONS:
 			// delete all collections
-			Log.i("com.martineve.mendroid.data.MendeleyContentProvider", "Deleting collections table.");
+			Log.i("com.martineve.mendroid.data.MendeleyCollectionsProvider", "Deleting collections table.");
 			DB.delete("collections", null, null);
 			return 1;
 		default:
 			IllegalArgumentException e = new IllegalArgumentException("Unsupported URI: " + uri);
-			Log.e("com.martineve.mendroid.data.MendeleyContentProvider", "Unsupported content type requested.");
+			Log.e("com.martineve.mendroid.data.MendeleyCollectionsProvider", "Unsupported content type requested.");
 			throw e;
 		} 
 	}
@@ -77,11 +77,11 @@ public class MendeleyContentProvider extends ContentProvider {
 	public String getType(Uri uri) {
 		switch (uriMatcher.match(uri)){
 		case COLLECTIONS:
-			Log.i("com.martineve.mendroid.data.MendeleyContentProvider", "Returning content type of mendroid.collections.");
+			Log.i("com.martineve.mendroid.data.MendeleyCollectionsProvider", "Returning content type of mendroid.collections.");
 			return "vnd.android.cursor.dir/vnd.martineve.mendroid.collections";
 		default:
 			IllegalArgumentException e = new IllegalArgumentException("Unsupported URI: " + uri);
-			Log.e("com.martineve.mendroid.data.MendeleyContentProvider", "Unsupported content type requested.");
+			Log.e("com.martineve.mendroid.data.MendeleyCollectionsProvider", "Unsupported content type requested.");
 			throw e;
 		}   
 	}
@@ -109,12 +109,12 @@ public class MendeleyContentProvider extends ContentProvider {
 		{
 			Uri _uri = ContentUris.withAppendedId(COLLECTION_URI, rowID);
 			getContext().getContentResolver().notifyChange(_uri, null);    
-			Log.i("com.martineve.mendroid.data.MendeleyContentProvider", "Inserted row [" + values + "] into " + uri + ".");
+			Log.i("com.martineve.mendroid.data.MendeleyCollectionsProvider", "Inserted row [" + values + "] into " + uri + ".");
 			return _uri;                
 		}        
 		
 		SQLException e = new SQLException("Failed to insert row into " + uri);
-		Log.e("com.martineve.mendroid.data.MendeleyContentProvider", "Failed to insert row [" + values + "] into Collections table.", e);
+		Log.e("com.martineve.mendroid.data.MendeleyCollectionsProvider", "Failed to insert row [" + values + "] into Collections table.", e);
 
 		throw e;
 	}

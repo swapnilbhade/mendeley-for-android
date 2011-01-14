@@ -9,5 +9,9 @@
 	<string name="auth_fail_text">Your Mendeley account was not authorized to this device, seemingly through user choice.</string>
 	<string name="credit_text">Copyright &lt;a href=\&quot;http://www.martineve.com\&quot;&gt;Martin Paul Eve&lt;/a&gt;, 2011</string>
 	
+	<string name="prefs_cat_sync_title">Synchronization</string>
+	<string name="prefs_sync_collections_title">Sync collections</string>
+	<string name="prefs_sync_collections_summary">Synchronize collections to your device</string>
+	
 	<string name="ACCOUNT_TYPE">com.martineve.mendroid.account</string>
 </resources>

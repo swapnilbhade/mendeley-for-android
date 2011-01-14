@@ -61,6 +61,6 @@ public class MendeleyDatabase extends SQLiteOpenHelper
 		values.put(MendeleyDatabase.COLLECTION_SIZE, size);
 		values.put(MendeleyDatabase.SYNC_UP, sync_up);
 		
-		return mContentResolver.insert(MendeleyContentProvider.COLLECTIONS_URI, values);
+		return mContentResolver.insert(MendeleyCollectionsProvider.COLLECTIONS_URI, values);
 	}
 }
