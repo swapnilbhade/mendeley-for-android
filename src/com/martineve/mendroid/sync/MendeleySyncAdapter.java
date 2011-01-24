@@ -47,6 +47,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SyncAdapterType;
 import android.content.SyncResult;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -61,10 +62,8 @@ import com.martineve.mendroid.util.MendeleyConnector;
 
 public class MendeleySyncAdapter extends Service {
 
-	private static final String TAG = "MendeleySyncAdapter";
-
+	private static final String TAG = "com.martineve.mendroid.sync.MendeleySyncAdapter";
 	private static SyncAdapterImpl sSyncAdapter = null;
-
 	private static ContentResolver mContentResolver = null;
 
 	public MendeleySyncAdapter() {
@@ -119,12 +118,12 @@ public class MendeleySyncAdapter extends Service {
 		@Override
 		public void run(AccountManagerFuture<Bundle> arg0) {
 			try {			
-				Log.i("com.martineve.mendroid.sync.MendeleySyncAdapter", "Received access token callback.");
+				Log.i(TAG, "Received access token callback.");
 				
 				// this is where the accesstoken callback lands
 				String accessToken = arg0.getResult().getString(AccountManager.KEY_AUTHTOKEN);
 				
-				Log.i("com.martineve.mendroid.data.MendeleySyncAdapter", "Parsing access token.");
+				Log.i(TAG, "Parsing access token.");
 				String[] aTSplit = accessToken.split("/");
 				
 				// now go through each of the sync items
@@ -134,8 +133,10 @@ public class MendeleySyncAdapter extends Service {
 				// COLLECTIONS
 				
 				// TODO: firstly, iterate over all database columns with sync_up = true and add to server
+				// TODO: make this run on temporary tables
+				// TODO: the sync functionality needs to support resume; risk of interruption is too high
 				
-				Log.i("com.martineve.mendroid.sync.MendeleySyncAdapter", "Asking API for collections.");
+				Log.i(TAG, "Asking API for collections.");
 				apit.execute(new String[] {MendeleyURLs.getURL(MendeleyURLs.COLLECTIONS)}, a_app);
 				try {
 					Object o = apit.get()[0];
@@ -143,19 +144,91 @@ public class MendeleySyncAdapter extends Service {
 					
 					int collection_count = collections.length();
 					
-					// delete all existing collections
+					// delete all collections
 					mContentResolver.delete(MendeleyCollectionsProvider.COLLECTIONS_URI, null, null);
 					
 					// now re-add
 					for(int i = 0; i < collection_count; i++)
-					{
+					{					
+						
 						JSONObject newCollection = collections.getJSONObject(i);
-						int id = newCollection.getInt("id");
+						int collection_id = newCollection.getInt("id");
 						String name = newCollection.getString("name");
 						String type = newCollection.getString("type");
 						int size = newCollection.getInt("size");
 						
-						MendeleyDatabase.insertCollection(id, name, type, size, false, mContentResolver);
+						MendeleyDatabase.insertCollection(collection_id, name, type, size, false, mContentResolver);
+						
+						// get all collection items so that all related data can be deleted
+						mContentResolver.query(MendeleyCollectionsProvider.COLLECTION_DOCUMENTS_URI, null, "collection_id=? ", new String[] {Integer.toString(collection_id)}, "");
+						
+						// delete all data associated with this document
+						mContentResolver.delete(MendeleyCollectionsProvider.COLLECTION_DOCUMENTS_URI, "collection_id=?", new String[] { Integer.toString(collection_id) });
+						
+						// request all documents from this collection
+						apit = new MendeleyAPITask(m_connect);
+						
+						Log.i(TAG, "Asking API for all documents in collection " + Integer.toString(collection_id)+ ".");
+						apit.execute(new String[] {MendeleyURLs.getURL(MendeleyURLs.COLLECTION_DOCUMENTS + Integer.toString(collection_id) + "/", "items=999999")}, a_app);
+						
+						o = apit.get()[0];
+						
+						Log.v(TAG, "Parsing JSONArray from API response (CollectionDocuments)");
+						JSONArray CollectionDocuments = (JSONArray)o;
+						
+						Log.v(TAG, "Parsing JSONObject from CollectionDocuments");
+						JSONObject newCollectionDocuments = CollectionDocuments.getJSONObject(0);
+						
+						// we need the "document_ids" parameter
+						Log.v(TAG, "Parsing JSONArray from document_ids parameter");
+						JSONArray documentIDs = newCollectionDocuments.getJSONArray("document_ids");
+						
+						// one more array to parse
+						int documents_count = documentIDs.length();
+						
+						// now loop over documents
+						for(int d = 0; d < documents_count; d++)
+						{
+							String document_id = documentIDs.getString(d);
+							
+							// now retrieve the document info from the Mendeley server
+							// TODO: add flag to toggle whether we update if it exists already
+							
+							Log.i(TAG, "Asking API for document " + document_id + ".");
+							
+							apit = new MendeleyAPITask(m_connect);
+							apit.execute(new String[] {MendeleyURLs.getURL(MendeleyURLs.DOCUMENT + document_id + "/")}, a_app);
+							
+							o = apit.get()[0];
+							
+							Log.v(TAG, "Parsing JSONArray from API response (document)");
+							
+							JSONArray document = (JSONArray)o;
+							
+							Log.v(TAG, "Parsing JSONObject from document");
+							
+							JSONObject documentInfo = document.getJSONObject(0);
+							
+							// we now have all the information needed to construct a basic document
+							// insert query; authors and so forth go in different tables
+							
+							String document_title = documentInfo.getString("title");
+							String document_type = documentInfo.getString("type");
+							
+							Uri documentUri = MendeleyDatabase.insertDocument(Long.parseLong(document_id), document_title, document_type, collection_id, false, mContentResolver);
+							
+							JSONArray authors = documentInfo.getJSONArray("authors");
+							
+							for(int a = 0; a < authors.length(); a++)
+							{
+								// now insert the authors
+								Uri authorUri = MendeleyDatabase.insertOrGetAuthor(authors.getString(a), false, mContentResolver);
+								
+								// insert an author-document link
+								MendeleyDatabase.linkDocumentAndAuthor(authorUri, documentUri, false, mContentResolver);
+							}
+							
+						}
 					}
 					
 					

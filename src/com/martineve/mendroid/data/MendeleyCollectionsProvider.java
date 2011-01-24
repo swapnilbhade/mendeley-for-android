@@ -21,13 +21,30 @@ import android.util.Log;
 
 public class MendeleyCollectionsProvider extends ContentProvider {
 
+	private static String TAG = "com.martineve.mendroid.data.MendeleyCollectionsProvider";
+	
 	private static String PROVIDER_NAME = "com.martineve.mendroid.data.mendeleycollectionsprovider";
 
+	public static final Uri AUTHOR_URI = Uri.parse("content://" + PROVIDER_NAME + "/author");
+	
 	public static final Uri CONTENT_URI = Uri.parse("content://" + PROVIDER_NAME + "/");
 	public static final Uri COLLECTIONS_URI = Uri.parse("content://" + PROVIDER_NAME + "/collections");
 	public static final Uri COLLECTION_URI = Uri.parse("content://" + PROVIDER_NAME + "/collection");
+	
+	public static final Uri DOCUMENT_URI = Uri.parse("content://" + PROVIDER_NAME + "/document");
+	public static final Uri COLLECTION_DOCUMENTS_URI = Uri.parse("content://" + PROVIDER_NAME + "/collection/documents");
+	public static final Uri COLLECTION_AUTHORS_URI = Uri.parse("content://" + PROVIDER_NAME + "/collection/authors");
+	
+	public static final Uri AUTHOR_TO_DOCUMENT_URI = Uri.parse("content://" + PROVIDER_NAME + "/document/author");
 
 	private static final int COLLECTIONS = 1;
+	private static final int COLLECTION = 2;
+	private static final int DOCUMENTS = 3;
+	private static final int DOCUMENT = 4;
+	private static final int AUTHOR = 5;
+	private static final int AUTHOR_ID = 5;
+	private static final int AUTHOR_TO_DOCUMENT = 6;
+	private static final int AUTHORS_IN_COLLECTION = 6;
 
 	private SQLiteDatabase DB;
 	private AsyncTask<SQLiteOpenHelper, Void, SQLiteDatabase> DBFetcher;
@@ -54,7 +71,13 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 	static{
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		uriMatcher.addURI(PROVIDER_NAME, "collections", COLLECTIONS);
-		//uriMatcher.addURI(PROVIDER_NAME, "collections/#", COLLECTION_ID);      
+		uriMatcher.addURI(PROVIDER_NAME, "collection/#", COLLECTION);
+		uriMatcher.addURI(PROVIDER_NAME, "collection/documents", DOCUMENTS);
+		uriMatcher.addURI(PROVIDER_NAME, "document/#", DOCUMENT);
+		uriMatcher.addURI(PROVIDER_NAME, "author", AUTHOR);
+		uriMatcher.addURI(PROVIDER_NAME, "author/*", AUTHOR_ID);
+		uriMatcher.addURI(PROVIDER_NAME, "document/author", AUTHOR_TO_DOCUMENT);
+		uriMatcher.addURI(PROVIDER_NAME, "collection/authors/#", AUTHORS_IN_COLLECTION);
 	}
 
 
@@ -63,12 +86,17 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 		switch (uriMatcher.match(uri)){
 		case COLLECTIONS:
 			// delete all collections
-			Log.i("com.martineve.mendroid.data.MendeleyCollectionsProvider", "Deleting collections table.");
+			Log.i(TAG, "Deleting collections table.");
 			DB.delete("collections", null, null);
+			return 1;
+		case DOCUMENTS:
+			// delete all documents from a collection
+			Log.i(TAG, "Deleting documents where collection is " + selectionArgs[0] + ".");
+			DB.delete("documents", selection, selectionArgs);
 			return 1;
 		default:
 			IllegalArgumentException e = new IllegalArgumentException("Unsupported URI: " + uri);
-			Log.e("com.martineve.mendroid.data.MendeleyCollectionsProvider", "Unsupported content type requested.");
+			Log.e(TAG, "Unsupported content type requested.");
 			throw e;
 		} 
 	}
@@ -77,11 +105,14 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 	public String getType(Uri uri) {
 		switch (uriMatcher.match(uri)){
 		case COLLECTIONS:
-			Log.i("com.martineve.mendroid.data.MendeleyCollectionsProvider", "Returning content type of mendroid.collections.");
+			Log.i(TAG, "Returning content type of mendroid.collections.");
 			return "vnd.android.cursor.dir/vnd.martineve.mendroid.collections";
+		case AUTHOR_ID:
+			Log.i(TAG, "Returning content type of mendroid.author.");
+			return "vnd.android.cursor.item/vnd.martineve.mendroid.author";
 		default:
 			IllegalArgumentException e = new IllegalArgumentException("Unsupported URI: " + uri);
-			Log.e("com.martineve.mendroid.data.MendeleyCollectionsProvider", "Unsupported content type requested.");
+			Log.e(TAG, "Unsupported content type requested.");
 			throw e;
 		}   
 	}
@@ -97,6 +128,15 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 		case COLLECTIONS:
 			DATABASE_TABLE="COLLECTIONS";
 			break;
+		case DOCUMENTS:
+			DATABASE_TABLE="DOCUMENTS";
+			break;
+		case AUTHOR:
+			DATABASE_TABLE="AUTHORS";
+			break;
+		case AUTHOR_TO_DOCUMENT:
+			DATABASE_TABLE="DOCUMENTTOAUTHORS";
+			break;
 		default:
 			return null;
 		}
@@ -107,14 +147,35 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 		// check if added
 		if (rowID>0)
 		{
-			Uri _uri = ContentUris.withAppendedId(COLLECTION_URI, rowID);
-			getContext().getContentResolver().notifyChange(_uri, null);    
-			Log.i("com.martineve.mendroid.data.MendeleyCollectionsProvider", "Inserted row [" + values + "] into " + uri + ".");
-			return _uri;                
+			Uri _uri;
+			switch (uriMatcher.match(uri)){
+			case COLLECTIONS:
+				_uri = ContentUris.withAppendedId(COLLECTION_URI, rowID);
+				getContext().getContentResolver().notifyChange(_uri, null);    
+				Log.i(TAG, "Inserted row [" + values + "] into " + uri + ".");
+				return _uri;
+			case DOCUMENTS:
+				_uri = ContentUris.withAppendedId(DOCUMENT_URI, rowID);
+				getContext().getContentResolver().notifyChange(_uri, null);    
+				Log.i(TAG, "Inserted row [" + values + "] into " + uri + ".");
+				return _uri;
+			case AUTHOR:
+				_uri = ContentUris.withAppendedId(AUTHOR_URI, rowID);
+				getContext().getContentResolver().notifyChange(_uri, null);    
+				Log.i(TAG, "Inserted row [" + values + "] into " + uri + ".");
+				return _uri;
+			case AUTHOR_TO_DOCUMENT:
+				_uri = ContentUris.withAppendedId(AUTHOR_TO_DOCUMENT_URI, rowID);
+				getContext().getContentResolver().notifyChange(_uri, null);    
+				Log.i(TAG, "Inserted row [" + values + "] into " + uri + ".");
+				return _uri;
+			default:
+				return null;
+			}
 		}        
 		
 		SQLException e = new SQLException("Failed to insert row into " + uri);
-		Log.e("com.martineve.mendroid.data.MendeleyCollectionsProvider", "Failed to insert row [" + values + "] into Collections table.", e);
+		Log.e(TAG, "Failed to insert row [" + values + "] into Collections table.", e);
 
 		throw e;
 	}
@@ -136,26 +197,54 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 		LoadDB();
 
 		String DATABASE_TABLE;
+		
+		SQLiteQueryBuilder sqlBuilder = new SQLiteQueryBuilder();
 
 		switch (uriMatcher.match(uri)){
-		//---get all collections---
 		case COLLECTIONS:
 			DATABASE_TABLE="COLLECTIONS";
+			break;
+		case AUTHOR_ID:
+			DATABASE_TABLE="AUTHORS";
+	        sqlBuilder.appendWhere(MendeleyDatabase.AUTHOR_NAME + " = "); 
+			sqlBuilder.appendWhereEscapeString(uri.getPathSegments().get(1));
+			sqlBuilder.appendWhere("");
+			break;
+		case AUTHORS_IN_COLLECTION:
+			/*
+			 * SELECT DISTINCT author_name
+			 * FROM authors
+			 * WHERE _id IN 
+			 * (SELECT DISTINCT author_id FROM documenttoauthors WHERE document_id IN 
+			 * ((SELECT _id FROM documents WHERE collection_id = ?))
+			 */
+
+			//SELECT DISTINCT author_name
+			sqlBuilder.setDistinct(true);
+			
+			// FROM authors
+			DATABASE_TABLE="AUTHORS";
+			
+			// WHERE _id IN 
+	        sqlBuilder.appendWhere(MendeleyDatabase.DOCUMENT_TO_AUTHORS_DOCUMENT_ID + " IN ");
+	        
+	        // (SELECT DISTINCT author_id FROM documenttoauthors WHERE document_id IN 
+	        sqlBuilder.appendWhere("(SELECT DISTINCT" + MendeleyDatabase.DOCUMENT_TO_AUTHORS_AUTHOR_ID + " documenttoauthors WHERE " 
+	        		+ MendeleyDatabase.DOCUMENT_TO_AUTHORS_DOCUMENT_ID + " IN");
+	        
+	        // ((SELECT _id FROM documents WHERE collection_id = ?))
+	        sqlBuilder.appendWhere("((SELECT " + MendeleyDatabase._ID + " FROM documents WHERE collection_id = ");
+			// note: int cast gives additional injection protection at little extra cost
+	        sqlBuilder.appendWhere(Integer.toString(Integer.parseInt(uri.getPathSegments().get(2))));
+			sqlBuilder.appendWhere("))");
+			
 			break;
 		default:
 			return null;
 		}
 
-		SQLiteQueryBuilder sqlBuilder = new SQLiteQueryBuilder();
 		sqlBuilder.setTables(DATABASE_TABLE);
 
-		/*if (uriMatcher.match(uri) == BOOK_ID)
-	         //---if getting a particular book---
-	         sqlBuilder.appendWhere(
-	            _ID + " = " + uri.getPathSegments().get(1));*/                
-
-		/*if (sortOrder==null || sortOrder=="")
-	         sortOrder = TITLE;*/
 
 		Cursor c = sqlBuilder.query(
 				DB, 
@@ -166,7 +255,6 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 				null, 
 				sortOrder);
 
-		//---register to watch a content URI for changes---
 		c.setNotificationUri(getContext().getContentResolver(), uri);
 		return c;
 	}

@@ -70,6 +70,13 @@ public class MendeleyAPITask extends AsyncTask<Object, Integer, JSONArray[]> {
         		Log.i("com.martineve.mendroid.task.MendeleyAPITask", "Executing API call: " + urls[i]);
         		
 				String strResponse = m_connect.getMendeleyResponse(urls[i]);
+				
+				if(!strResponse.replace("\n", "").startsWith("["))
+				{
+					// wrap in JSONArray delimiters
+					strResponse = "[" + strResponse + "]";
+				}
+				
 				ret[i] = new JSONArray(strResponse);
 				
 				Log.i("com.martineve.mendroid.task.MendeleyAPITask", "Succesfully retrieved API call: " + urls[i]);
@@ -81,6 +88,7 @@ public class MendeleyAPITask extends AsyncTask<Object, Integer, JSONArray[]> {
 			}
             publishProgress((int) ((i / (float) count) * 100));
         }
+        
         
         return ret;
 	}

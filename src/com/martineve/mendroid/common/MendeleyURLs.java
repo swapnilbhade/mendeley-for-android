@@ -24,7 +24,9 @@ package com.martineve.mendroid.common;
 public class MendeleyURLs {
 	public static String BASE = "http://www.mendeley.com";
 	public static String COLLECTIONS = "/oapi/library/collections/";
+	public static String COLLECTION_DOCUMENTS = "/oapi/library/collections/";
 	public static String CONTACTS = "/oapi/profiles";
+	public static String DOCUMENT = "/oapi/library/documents/";
 	public static String OAUTH_REQUEST = "/oauth/request_token/";
 	public static String OAUTH_ACCESS = "/oauth/access_token/";
 	public static String OAUTH_AUTHORIZE = "/oauth/authorize/";
@@ -32,5 +34,10 @@ public class MendeleyURLs {
 	public static String getURL(String URLWithoutBase)
 	{
 		return BASE + URLWithoutBase;
+	}
+	
+	public static String getURL(String URLWithoutBase, String params)
+	{
+		return BASE + URLWithoutBase + "?" + params;
 	}
 }
