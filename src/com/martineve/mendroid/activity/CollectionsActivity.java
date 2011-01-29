@@ -26,20 +26,24 @@ import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+import com.martineve.mendroid.MendeleyForAndroid;
 import com.martineve.mendroid.R;
 import com.martineve.mendroid.data.MendeleyCollectionsProvider;
 import com.martineve.mendroid.data.MendeleyDatabase;
 
 public class CollectionsActivity extends ListActivity {
+	private static String TAG = "com.martineve.mendroid.activity.CollectionsActivity";
 	ArrayList<HashMap<String,String>> c_list = new ArrayList<HashMap<String,String>>();  
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,16 +54,25 @@ public class CollectionsActivity extends ListActivity {
 		Cursor c = managedQuery(MendeleyCollectionsProvider.COLLECTIONS_URI, null, null, null, MendeleyDatabase.COLLECTION_NAME + " asc");
 
 		String[] from = new String[] {MendeleyDatabase.COLLECTION_NAME, MendeleyDatabase.COLLECTION_SIZE, MendeleyDatabase.COLLECTION_TYPE, MendeleyDatabase._ID};
-		
+
 		int[] to = new int[] { R.id.collection_entry, R.id.collection_size, R.id.collection_private_status, R.id.collection_post_id };
-		
+
 		ListAdapter adapter = new SimpleCursorAdapter(this, R.layout.collection_item, c, from, to);
 		this.setListAdapter(adapter);
 	}
-	
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
+
+		// gets a Cursor, set to the correct record
+		Cursor c = (Cursor)l.getItemAtPosition(position);
 		
-	  super.onListItemClick(l, v, position, id);
+		// launch the author intent
+		Log.v(TAG, "Launching collection authors intent.");
+		Intent launchCollectionAuthors = new Intent(CollectionsActivity.this, CollectionAuthorsActivity.class);
+		launchCollectionAuthors.putExtra("collection_id", c.getString(c.getColumnIndex(MendeleyDatabase._ID)));
+		startActivity(launchCollectionAuthors);
+		
+		super.onListItemClick(l, v, position, id);
 	}
 }

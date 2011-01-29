@@ -36,6 +36,8 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 	public static final Uri COLLECTION_AUTHORS_URI = Uri.parse("content://" + PROVIDER_NAME + "/collection/authors");
 	
 	public static final Uri AUTHOR_TO_DOCUMENT_URI = Uri.parse("content://" + PROVIDER_NAME + "/document/author");
+	
+	public static final Uri COLLECTION_AUTHOR_DOCUMENTS_URI = Uri.parse("content://" + PROVIDER_NAME + "/collection/author");
 
 	private static final int COLLECTIONS = 1;
 	private static final int COLLECTION = 2;
@@ -44,7 +46,8 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 	private static final int AUTHOR = 5;
 	private static final int AUTHOR_ID = 5;
 	private static final int AUTHOR_TO_DOCUMENT = 6;
-	private static final int AUTHORS_IN_COLLECTION = 6;
+	private static final int AUTHORS_IN_COLLECTION = 7;
+	private static final int DOCUMENTS_IN_AUTHORS_IN_COLLECTION = 8;
 
 	private SQLiteDatabase DB;
 	private AsyncTask<SQLiteOpenHelper, Void, SQLiteDatabase> DBFetcher;
@@ -78,6 +81,7 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 		uriMatcher.addURI(PROVIDER_NAME, "author/*", AUTHOR_ID);
 		uriMatcher.addURI(PROVIDER_NAME, "document/author", AUTHOR_TO_DOCUMENT);
 		uriMatcher.addURI(PROVIDER_NAME, "collection/authors/#", AUTHORS_IN_COLLECTION);
+		uriMatcher.addURI(PROVIDER_NAME, "collection/#/author/#", DOCUMENTS_IN_AUTHORS_IN_COLLECTION);
 	}
 
 
@@ -110,6 +114,12 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 		case AUTHOR_ID:
 			Log.i(TAG, "Returning content type of mendroid.author.");
 			return "vnd.android.cursor.item/vnd.martineve.mendroid.author";
+		case AUTHORS_IN_COLLECTION:
+			Log.i(TAG, "Returning content type of mendroid.authors.");
+			return "vnd.android.cursor.dir/vnd.martineve.mendroid.authors";
+		case DOCUMENTS_IN_AUTHORS_IN_COLLECTION:
+			Log.i(TAG, "Returning content type of mendroid.documents.");
+			return "vnd.android.cursor.dir/vnd.martineve.mendroid.documents";
 		default:
 			IllegalArgumentException e = new IllegalArgumentException("Unsupported URI: " + uri);
 			Log.e(TAG, "Unsupported content type requested.");
@@ -216,28 +226,51 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 			 * FROM authors
 			 * WHERE _id IN 
 			 * (SELECT DISTINCT author_id FROM documenttoauthors WHERE document_id IN 
-			 * ((SELECT _id FROM documents WHERE collection_id = ?))
+			 * (SELECT _id FROM documents WHERE collection_id = ?))
 			 */
-
+			
 			//SELECT DISTINCT author_name
-			sqlBuilder.setDistinct(true);
+			sqlBuilder.setDistinct(false);
 			
 			// FROM authors
 			DATABASE_TABLE="AUTHORS";
 			
 			// WHERE _id IN 
-	        sqlBuilder.appendWhere(MendeleyDatabase.DOCUMENT_TO_AUTHORS_DOCUMENT_ID + " IN ");
-	        
-	        // (SELECT DISTINCT author_id FROM documenttoauthors WHERE document_id IN 
-	        sqlBuilder.appendWhere("(SELECT DISTINCT" + MendeleyDatabase.DOCUMENT_TO_AUTHORS_AUTHOR_ID + " documenttoauthors WHERE " 
-	        		+ MendeleyDatabase.DOCUMENT_TO_AUTHORS_DOCUMENT_ID + " IN");
-	        
-	        // ((SELECT _id FROM documents WHERE collection_id = ?))
-	        sqlBuilder.appendWhere("((SELECT " + MendeleyDatabase._ID + " FROM documents WHERE collection_id = ");
-			// note: int cast gives additional injection protection at little extra cost
-	        sqlBuilder.appendWhere(Integer.toString(Integer.parseInt(uri.getPathSegments().get(2))));
-			sqlBuilder.appendWhere("))");
+	        sqlBuilder.appendWhere(MendeleyDatabase._ID 
+	    	        // (SELECT DISTINCT author_id FROM documenttoauthors WHERE document_id IN 
+	        		+ " IN (SELECT " + MendeleyDatabase.DOCUMENT_TO_AUTHORS_AUTHOR_ID + " FROM documenttoauthors WHERE "
+	        		+ MendeleyDatabase.DOCUMENT_TO_AUTHORS_DOCUMENT_ID + " IN "
+	        		// (SELECT _id FROM documents WHERE collection_id = ?))
+	        		+ "(SELECT " + MendeleyDatabase._ID + " FROM documents WHERE collection_id = "
+	        		// note: long cast gives additional injection protection at little extra cost
+	        		+ Long.toString(Long.parseLong(uri.getPathSegments().get(2)))
+	        		+ "))");
 			
+			break;
+		case DOCUMENTS_IN_AUTHORS_IN_COLLECTION:
+			 /*
+			 * SELECT *
+			 * FROM documents
+			 * WHERE collection_id = ? AND _id IN 
+			 * (SELECT DISTINCT document_id FROM documenttoauthors WHERE author_id = ?)
+			 */
+			
+			//SELECT DISTINCT author_name
+			sqlBuilder.setDistinct(false);
+			
+			// FROM documents
+			DATABASE_TABLE="DOCUMENTS";
+			
+			// WHERE collection_id = ? AND _id IN 
+	        sqlBuilder.appendWhere(MendeleyDatabase.DOCUMENT_COLLECTION_ID + " = "
+	        		+ Long.toString(Long.parseLong(uri.getPathSegments().get(1))) + " AND " + MendeleyDatabase._ID 
+	    	        // (SELECT document_id FROM documenttoauthors WHERE author_id = ?) 
+	        		+ " IN (SELECT " + MendeleyDatabase.DOCUMENT_TO_AUTHORS_DOCUMENT_ID + " FROM documenttoauthors WHERE "
+	        		// author_id = ?)
+	        		+ MendeleyDatabase.DOCUMENT_TO_AUTHORS_AUTHOR_ID + " = "
+	        		// note: long cast gives additional injection protection at little extra cost
+	        		+ Long.toString(Long.parseLong(uri.getPathSegments().get(3)))
+	        		+ ")");
 			break;
 		default:
 			return null;
