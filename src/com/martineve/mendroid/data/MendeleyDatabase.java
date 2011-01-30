@@ -15,7 +15,7 @@ public class MendeleyDatabase extends SQLiteOpenHelper
 	private static final String TAG = "com.martineve.mendroid.data.MendeleyDatabase";
 	
 	// the database version; increment to call update
-	private static final int DATABASE_VERSION = 5;
+	private static final int DATABASE_VERSION = 7;
 	
 	public static final String _ID = "_id";
 	public static final String SYNC_UP = "sync_up";
@@ -42,12 +42,12 @@ public class MendeleyDatabase extends SQLiteOpenHelper
 	// table creation statements
 	private static final String COLLECTIONS_CREATE =
 		"create table collections"+ 
-		" (_id integer primary key, "
+		" (_id bigint primary key, "
 		+ "collection_name text not null, collection_type text not null, collection_size int not null, sync_up bool not null);";
 	
 	private static final String DOCUMENTS_CREATE =
 		"create table documents"+ 
-		" (_id integer primary key, "
+		" (_id bigint primary key, "
 		+ "collection_id int not null, document_title string not null, document_type string not null, sync_up bool not null);";
 	
 	private static final String AUTHORS_CREATE =
@@ -99,7 +99,7 @@ public class MendeleyDatabase extends SQLiteOpenHelper
 		return mContentResolver.insert(MendeleyCollectionsProvider.COLLECTIONS_URI, values);
 	}
 	
-	public static Uri insertDocument(long id, String title, String type, int collection, boolean sync_up, ContentResolver mContentResolver)
+	public static Uri insertOrGetDocument(long id, String title, String type, int collection, boolean sync_up, ContentResolver mContentResolver)
 	{
 		ContentValues values = new ContentValues();
 		values.put(MendeleyDatabase._ID, id);
@@ -108,7 +108,23 @@ public class MendeleyDatabase extends SQLiteOpenHelper
 		values.put(MendeleyDatabase.DOCUMENT_COLLECTION_ID, collection);
 		values.put(MendeleyDatabase.SYNC_UP, sync_up);
 		
-		return mContentResolver.insert(MendeleyCollectionsProvider.COLLECTION_DOCUMENTS_URI, values);
+		Cursor c = mContentResolver.query(Uri.withAppendedPath(MendeleyCollectionsProvider.DOCUMENT_URI, Long.toString(id)), null, null, null, null);
+		
+		if(c.getCount() == 0)
+		{
+			mContentResolver.insert(MendeleyCollectionsProvider.COLLECTION_DOCUMENTS_URI, values);
+			
+			// call it again, because insert returns a row ID, not an ID
+			return insertOrGetDocument(id, title, type, collection, sync_up, mContentResolver);
+		}
+		 else
+			{
+				c.moveToFirst();
+				String ret = Long.toString(c.getLong(c.getColumnIndex(_ID)));
+				c.close();
+				
+				return Uri.withAppendedPath(MendeleyCollectionsProvider.DOCUMENT_URI, ret);
+			}
 	}
 	
 	public static Uri insertOrGetAuthor(String name, boolean sync_up, ContentResolver mContentResolver)
@@ -121,7 +137,10 @@ public class MendeleyDatabase extends SQLiteOpenHelper
 		
 		if(c.getCount() == 0)
 		{
-			return mContentResolver.insert(MendeleyCollectionsProvider.AUTHOR_URI, values);
+			mContentResolver.insert(MendeleyCollectionsProvider.AUTHOR_URI, values);
+			
+			// call it again, because insert returns a row ID, not an ID
+			return insertOrGetAuthor(name, sync_up, mContentResolver);
 		} else
 		{
 			c.moveToFirst();

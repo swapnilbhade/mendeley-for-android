@@ -58,7 +58,7 @@ public class CollectionAuthorDocuments extends ListActivity {
 		{
 			String newType = c.getString(c.getColumnIndex("document_type"));
 			
-			if (newType != currentType)
+			if (!newType.equals(currentType))
 			{
 				// add the section
 				adapter.addSection(currentType + "s", new ArrayAdapter<String>(this,

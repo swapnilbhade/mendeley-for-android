@@ -218,7 +218,11 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 			DATABASE_TABLE="AUTHORS";
 	        sqlBuilder.appendWhere(MendeleyDatabase.AUTHOR_NAME + " = "); 
 			sqlBuilder.appendWhereEscapeString(uri.getPathSegments().get(1));
-			sqlBuilder.appendWhere("");
+			break;
+		case DOCUMENT:
+			DATABASE_TABLE="DOCUMENTS";
+	        sqlBuilder.appendWhere(MendeleyDatabase._ID + " = "); 
+			sqlBuilder.appendWhere(Long.toString(Long.parseLong(uri.getPathSegments().get(1))));
 			break;
 		case AUTHORS_IN_COLLECTION:
 			/*

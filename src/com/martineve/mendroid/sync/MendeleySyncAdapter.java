@@ -160,7 +160,7 @@ public class MendeleySyncAdapter extends Service {
 						MendeleyDatabase.insertCollection(collection_id, name, type, size, false, mContentResolver);
 						
 						// get all collection items so that all related data can be deleted
-						mContentResolver.query(MendeleyCollectionsProvider.COLLECTION_DOCUMENTS_URI, null, "collection_id=? ", new String[] {Integer.toString(collection_id)}, "");
+						//mContentResolver.query(MendeleyCollectionsProvider.COLLECTION_DOCUMENTS_URI, null, "collection_id=? ", new String[] {Integer.toString(collection_id)}, "");
 						
 						// delete all data associated with this document
 						mContentResolver.delete(MendeleyCollectionsProvider.COLLECTION_DOCUMENTS_URI, "collection_id=?", new String[] { Integer.toString(collection_id) });
@@ -215,7 +215,7 @@ public class MendeleySyncAdapter extends Service {
 							String document_title = documentInfo.getString("title");
 							String document_type = documentInfo.getString("type");
 							
-							Uri documentUri = MendeleyDatabase.insertDocument(Long.parseLong(document_id), document_title, document_type, collection_id, false, mContentResolver);
+							Uri documentUri = MendeleyDatabase.insertOrGetDocument(Long.parseLong(document_id), document_title, document_type, collection_id, false, mContentResolver);
 							
 							JSONArray authors = documentInfo.getJSONArray("authors");
 							

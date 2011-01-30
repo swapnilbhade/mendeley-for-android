@@ -56,7 +56,7 @@ public class CollectionAuthorsActivity extends ListActivity {
 
 		collection_id = extra.getString("collection_id");
 		
-		Cursor c = managedQuery(Uri.withAppendedPath(MendeleyCollectionsProvider.COLLECTION_AUTHORS_URI, extra.getString("collection_id")), null, null, null, MendeleyDatabase.AUTHOR_NAME + " asc");
+		Cursor c = managedQuery(Uri.withAppendedPath(MendeleyCollectionsProvider.COLLECTION_AUTHORS_URI, collection_id), null, null, null, MendeleyDatabase.AUTHOR_NAME + " asc");
 
 		// TODO: perhaps a document count here?
 		String[] from = new String[] {MendeleyDatabase.AUTHOR_NAME, MendeleyDatabase._ID};
