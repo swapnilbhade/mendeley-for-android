@@ -133,19 +133,22 @@ public class MendeleySyncAdapter extends Service {
 				// COLLECTIONS
 				
 				// TODO: firstly, iterate over all database columns with sync_up = true and add to server
-				// TODO: make this run on temporary tables
 				// TODO: the sync functionality needs to support resume; risk of interruption is too high
 				
 				Log.i(TAG, "Asking API for collections.");
 				apit.execute(new String[] {MendeleyURLs.getURL(MendeleyURLs.COLLECTIONS)}, a_app);
+				
+				// delete everything from all temp tables
+				mContentResolver.delete(MendeleyCollectionsProvider.TEMP_COLLECTIONS_URI, null, null);
+				mContentResolver.delete(MendeleyCollectionsProvider.TEMP_COLLECTION_DOCUMENTS_URI, null, null);
+				mContentResolver.delete(MendeleyCollectionsProvider.TEMP_AUTHOR_URI, null, null);
+				mContentResolver.delete(MendeleyCollectionsProvider.TEMP_AUTHOR_TO_DOCUMENT_URI, null, null);
+				
 				try {
 					Object o = apit.get()[0];
 					JSONArray collections = (JSONArray)o;
 					
 					int collection_count = collections.length();
-					
-					// delete all collections
-					mContentResolver.delete(MendeleyCollectionsProvider.COLLECTIONS_URI, null, null);
 					
 					// now re-add
 					for(int i = 0; i < collection_count; i++)
@@ -157,13 +160,7 @@ public class MendeleySyncAdapter extends Service {
 						String type = newCollection.getString("type");
 						int size = newCollection.getInt("size");
 						
-						MendeleyDatabase.insertCollection(collection_id, name, type, size, false, mContentResolver);
-						
-						// get all collection items so that all related data can be deleted
-						//mContentResolver.query(MendeleyCollectionsProvider.COLLECTION_DOCUMENTS_URI, null, "collection_id=? ", new String[] {Integer.toString(collection_id)}, "");
-						
-						// delete all data associated with this document
-						mContentResolver.delete(MendeleyCollectionsProvider.COLLECTION_DOCUMENTS_URI, "collection_id=?", new String[] { Integer.toString(collection_id) });
+						MendeleyDatabase.insertCollection(collection_id, name, type, size, false, true, mContentResolver);
 						
 						// request all documents from this collection
 						apit = new MendeleyAPITask(m_connect);
@@ -212,25 +209,45 @@ public class MendeleySyncAdapter extends Service {
 							// we now have all the information needed to construct a basic document
 							// insert query; authors and so forth go in different tables
 							
-							String document_title = documentInfo.getString("title");
-							String document_type = documentInfo.getString("type");
+							String document_title = "";
+							try { document_title = documentInfo.getString("title"); } 
+								catch (Exception e) { Log.e(TAG, "Error getting document title."); }
 							
-							Uri documentUri = MendeleyDatabase.insertOrGetDocument(Long.parseLong(document_id), document_title, document_type, collection_id, false, mContentResolver);
+							String document_type = "";
+							try { document_type = documentInfo.getString("type"); } 
+								catch (Exception e) { Log.e(TAG, "Error getting document type."); }
+							
+								
+							String document_year = "";
+							try { document_year = documentInfo.getString("year"); } 
+								catch (Exception e) { Log.e(TAG, "Error getting document year."); }
+							
+							String document_abstract = "";
+							try { document_abstract = documentInfo.getString("abstract"); } 
+								catch (Exception e) { Log.e(TAG, "Error getting document year."); }
+							
+							Uri documentUri = MendeleyDatabase.insertOrGetDocument(Long.parseLong(document_id), document_title, document_type, document_year, document_abstract, collection_id, false, true, mContentResolver);
 							
 							JSONArray authors = documentInfo.getJSONArray("authors");
 							
 							for(int a = 0; a < authors.length(); a++)
 							{
 								// now insert the authors
-								Uri authorUri = MendeleyDatabase.insertOrGetAuthor(authors.getString(a), false, mContentResolver);
+								Uri authorUri = MendeleyDatabase.insertOrGetAuthor(authors.getString(a), false, true, mContentResolver);
 								
 								// insert an author-document link
-								MendeleyDatabase.linkDocumentAndAuthor(authorUri, documentUri, false, mContentResolver);
+								MendeleyDatabase.linkDocumentAndAuthor(authorUri, documentUri, false, true, mContentResolver);
 							}
 							
 						}
 					}
 					
+					// end of the collections loop
+					// transfer the contents of the temporary tables to the main tables
+
+					// CONTENT_URI is a special call that triggers the move from
+					// temp tables to main on delete
+					mContentResolver.delete(MendeleyCollectionsProvider.MOVE_URI, null, null);
 					
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
