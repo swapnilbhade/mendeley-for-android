@@ -25,6 +25,8 @@ package com.martineve.mendroid.activity;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
+import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -46,6 +48,12 @@ public class CreateMendeleyAccount extends AccountAuthenticatorActivity implemen
 	public void onClick(View v) {		
 		Account account = new Account(((EditText)findViewById(R.id.login_page_identifier)).getText().toString(), "com.martineve.mendroid.account");
 		AccountManager am = AccountManager.get(this);
+		
+		// set the account to automatically synchronize
+		// CAN ONLY DO THIS IN FROYO:
+        //ContentResolver.addPeriodicSync(account, "com.martineve.mendroid.data.mendeleycollectionsprovider", null, 2*3600);
+		ContentResolver.setSyncAutomatically(account, "com.martineve.mendroid.data.mendeleycollectionsprovider" , true);
+		
 		try{
 			boolean accountCreated = am.addAccountExplicitly(account, null, null);
 			

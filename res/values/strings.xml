@@ -13,5 +13,8 @@
 	<string name="prefs_sync_collections_title">Sync collections</string>
 	<string name="prefs_sync_collections_summary">Synchronize collections to your device</string>
 	
+	<string name="menu_sync">Sync</string>
+	<string name="menu_quit">Quit</string>
+	
 	<string name="ACCOUNT_TYPE">com.martineve.mendroid.account</string>
 </resources>

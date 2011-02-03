@@ -15,7 +15,7 @@ public class MendeleyDatabase extends SQLiteOpenHelper
 	private static final String TAG = "com.martineve.mendroid.data.MendeleyDatabase";
 	
 	// the database version; increment to call update
-	private static final int DATABASE_VERSION = 8;
+	private static final int DATABASE_VERSION = 9;
 	
 	public static final String _ID = "_id";
 	public static final String SYNC_UP = "sync_up";
@@ -38,6 +38,12 @@ public class MendeleyDatabase extends SQLiteOpenHelper
 	// document_to_authors fields
 	public static final String DOCUMENT_TO_AUTHORS_DOCUMENT_ID = "document_id";
 	public static final String DOCUMENT_TO_AUTHORS_AUTHOR_ID = "author_id";
+	
+	// sync state fields
+	public static final String SYNC_STATE_OPERATION = "operation";
+	public static final String SYNC_STATE_IN_PROGRESS = "in_progress";
+	public static final String SYNC_STATE_DATA = "associated_data";
+	public static final String SYNC_STATE_POSITION = "position";
 	
 	private static final String DATABASE_NAME = "Mendeley";
 	
@@ -62,6 +68,11 @@ public class MendeleyDatabase extends SQLiteOpenHelper
 		"create table documenttoauthors"+ 
 		" (_id integer primary key autoincrement, "
 		+ "author_id int not null, document_id int not null, sync_up bool not null);";
+	
+	private static final String SYNC_STATE_CREATE =
+		"create table syncstate"+ 
+		" (_id integer primary key autoincrement, "
+		+ "operation string not null, in_progress bool not null, associated_data text, position bigint);";
 
 	MendeleyDatabase(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -74,6 +85,7 @@ public class MendeleyDatabase extends SQLiteOpenHelper
 		db.execSQL(DOCUMENTS_CREATE);
 		db.execSQL(AUTHORS_CREATE);
 		db.execSQL(DOCUMENT_TO_AUTHORS_CREATE);
+		db.execSQL(SYNC_STATE_CREATE);
 		
 		createTempTables(db);
 	}

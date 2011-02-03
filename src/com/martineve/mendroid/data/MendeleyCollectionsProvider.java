@@ -44,6 +44,8 @@ public class MendeleyCollectionsProvider extends ContentProvider {
 	public static final Uri TEMP_AUTHOR_TO_DOCUMENT_URI = Uri.parse("content://" + PROVIDER_NAME + "/tempdocument/author");
 	public static final Uri TEMP_COLLECTION_AUTHOR_DOCUMENTS_URI = Uri.parse("content://" + PROVIDER_NAME + "/tempcollection/author");
 	
+	public static final Uri SYNC_STATE_URI = Uri.parse("content://" + PROVIDER_NAME + "/syncstate");
+	
 	public static final Uri MOVE_URI = Uri.parse("content://" + PROVIDER_NAME + "/movetemptables");
 
 	private static final int COLLECTIONS = 1;

@@ -34,9 +34,10 @@ import android.widget.TabHost;
 import com.martineve.mendroid.activity.CollectionsActivity;
 import com.martineve.mendroid.activity.ContactsActivity;
 import com.martineve.mendroid.activity.CreateMendeleyAccount;
+import com.martineve.mendroid.activity.SyncQuitMenu;
 import com.martineve.mendroid.common.Common;
 
-public class MendeleyForAndroid extends TabActivity {
+public class MendeleyForAndroid extends SyncQuitMenu {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

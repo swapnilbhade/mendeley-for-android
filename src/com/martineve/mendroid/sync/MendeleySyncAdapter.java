@@ -53,6 +53,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.martineve.mendroid.R;
+import com.martineve.mendroid.activity.CreateMendeleyAccount;
+import com.martineve.mendroid.activity.SyncQuitMenu;
 import com.martineve.mendroid.common.MendeleyURLs;
 import com.martineve.mendroid.data.MendeleyCollectionsProvider;
 import com.martineve.mendroid.data.MendeleyDatabase;
@@ -122,6 +125,28 @@ public class MendeleySyncAdapter extends Service {
 				
 				// this is where the accesstoken callback lands
 				String accessToken = arg0.getResult().getString(AccountManager.KEY_AUTHTOKEN);
+				
+				if (accessToken == null)
+				{
+					/*mContentResolver = a_app.getContentResolver();
+					
+					AccountManager am = AccountManager.get(a_app);
+					
+					AccountManagerCB AMC = new AccountManagerCB(a_app); 
+					
+					Account[] a = am.getAccountsByType(a_app.getString(R.string.ACCOUNT_TYPE));
+
+					if(a.length == 0)
+					{
+						Log.e(TAG, "No Mendeley accounts found while in sync procedure.");
+					} else {
+						// start a sync request
+						Log.i("com.martineve.mendroid.sync.MendeleyForAndroid", "Retrieving auth token.");
+						am.getAuthToken(a[0], "com.martineve.mendroid.account", true, AMC, null);
+					}*/
+					
+					return;
+				}
 				
 				Log.i(TAG, "Parsing access token.");
 				String[] aTSplit = accessToken.split("/");
