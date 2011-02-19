@@ -128,9 +128,11 @@ public class MendeleySyncAdapter extends Service {
 				
 				if (accessToken == null)
 				{
-					/*mContentResolver = a_app.getContentResolver();
+					mContentResolver = a_app.getContentResolver();
 					
 					AccountManager am = AccountManager.get(a_app);
+					
+					am.invalidateAuthToken(a_app.getString(R.string.ACCOUNT_TYPE), null);
 					
 					AccountManagerCB AMC = new AccountManagerCB(a_app); 
 					
@@ -143,7 +145,7 @@ public class MendeleySyncAdapter extends Service {
 						// start a sync request
 						Log.i("com.martineve.mendroid.sync.MendeleyForAndroid", "Retrieving auth token.");
 						am.getAuthToken(a[0], "com.martineve.mendroid.account", true, AMC, null);
-					}*/
+					}
 					
 					return;
 				}

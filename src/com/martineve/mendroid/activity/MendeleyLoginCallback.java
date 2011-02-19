@@ -21,6 +21,8 @@
 
 package com.martineve.mendroid.activity;
 
+import java.net.URLDecoder;
+
 import oauth.signpost.OAuthConsumer;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
@@ -76,6 +78,8 @@ public class MendeleyLoginCallback extends Activity {
 	
 	private void handleLoad()
 	{
+		android.os.Debug.waitForDebugger();
+		
 		// see if this onCreate was called by the Authenticator, or was passed back by the Browser		
 		AccountAuthenticatorResponse response = getIntent().getParcelableExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
 		
@@ -112,7 +116,7 @@ public class MendeleyLoginCallback extends Activity {
 				String accountName = uri.getQueryParameter("acc_name");
 				
 				Bundle result = new Bundle();
-				result.putString(AccountManager.KEY_ACCOUNT_NAME, accountName.replace('+', ' '));
+				result.putString(AccountManager.KEY_ACCOUNT_NAME, URLDecoder.decode(accountName));
 				result.putString(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.ACCOUNT_TYPE));
 				result.putString(AccountManager.KEY_AUTHTOKEN, consumer.getToken() + "/" + consumer.getTokenSecret());
 				
