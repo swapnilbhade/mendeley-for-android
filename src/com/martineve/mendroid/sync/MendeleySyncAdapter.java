@@ -69,6 +69,9 @@ public class MendeleySyncAdapter extends Service {
 	private static SyncAdapterImpl sSyncAdapter = null;
 	private static ContentResolver mContentResolver = null;
 	public static int failCount = 0;
+	
+	public static JSONArray preFetchedArray = null;
+	public static int resumePosition = 0;
 
 	public MendeleySyncAdapter() {
 		super();
@@ -175,26 +178,40 @@ public class MendeleySyncAdapter extends Service {
 				// COLLECTIONS
 				
 				// TODO: firstly, iterate over all database columns with sync_up = true and add to server
-				// TODO: the sync functionality needs to support resume; risk of interruption is too high
-				
-				Log.i(TAG, "Asking API for collections.");
-				apit.execute(new String[] {MendeleyURLs.getURL(MendeleyURLs.COLLECTIONS)}, a_app);
-				
-				// delete everything from all temp tables
-				mContentResolver.delete(MendeleyCollectionsProvider.TEMP_COLLECTIONS_URI, null, null);
-				mContentResolver.delete(MendeleyCollectionsProvider.TEMP_COLLECTION_DOCUMENTS_URI, null, null);
-				mContentResolver.delete(MendeleyCollectionsProvider.TEMP_AUTHOR_URI, null, null);
-				mContentResolver.delete(MendeleyCollectionsProvider.TEMP_AUTHOR_TO_DOCUMENT_URI, null, null);
 				
 				try {
-					Object o = apit.get()[0];
+					
+					Object o = null;
+					
+					// check if we are mid-collection
+					if (preFetchedArray == null)
+					{
+						Log.i(TAG, "Asking API for collections.");
+						apit.execute(new String[] {MendeleyURLs.getURL(MendeleyURLs.COLLECTIONS)}, a_app);
+						
+						// delete everything from all temp tables
+						mContentResolver.delete(MendeleyCollectionsProvider.TEMP_COLLECTIONS_URI, null, null);
+						mContentResolver.delete(MendeleyCollectionsProvider.TEMP_COLLECTION_DOCUMENTS_URI, null, null);
+						mContentResolver.delete(MendeleyCollectionsProvider.TEMP_AUTHOR_URI, null, null);
+						mContentResolver.delete(MendeleyCollectionsProvider.TEMP_AUTHOR_TO_DOCUMENT_URI, null, null);
+						
+						o = apit.get()[0];
+					}
+					else
+					{
+						Log.i(TAG, "Resuming sync from position " + Integer.toString(resumePosition) + ".");
+						o = preFetchedArray;
+					}
+					
 					JSONArray collections = (JSONArray)o;
 					
 					int collection_count = collections.length();
 					
 					// now re-add
-					for(int i = 0; i < collection_count; i++)
+					for(int i = resumePosition; i < collection_count; i++)
 					{					
+						
+						Log.i(TAG, "Syncing item at position " + Integer.toString(i) + ".");
 						
 						JSONObject newCollection = collections.getJSONObject(i);
 						int collection_id = newCollection.getInt("id");
@@ -281,15 +298,21 @@ public class MendeleySyncAdapter extends Service {
 								MendeleyDatabase.linkDocumentAndAuthor(authorUri, documentUri, false, true, mContentResolver);
 							}
 							
+							resumePosition = i;
+							
 						}
 					}
 					
 					// end of the collections loop
 					// transfer the contents of the temporary tables to the main tables
 
-					// CONTENT_URI is a special call that triggers the move from
+					// MOVE_URI is a special call that triggers this move from
 					// temp tables to main on delete
 					mContentResolver.delete(MendeleyCollectionsProvider.MOVE_URI, null, null);
+					
+					// reset variables that control resume functionality
+					resumePosition = 0;
+					preFetchedArray = null;
 					
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
@@ -320,7 +343,7 @@ public class MendeleySyncAdapter extends Service {
 
 	throws OperationCanceledException {
 		
-		Log.i("com.martineve.mendroid.MendeleyForAndroid", "Performing sync for account: " + account.toString());
+		Log.i(TAG, "Performing sync for account: " + account.toString());
 		
 		mContentResolver = context.getContentResolver();
 		
@@ -328,7 +351,7 @@ public class MendeleySyncAdapter extends Service {
 		
 		AccountManagerCB AMC = new AccountManagerCB(app); 
 		
-		Log.i("com.martineve.mendroid.sync.MendeleyForAndroid", "Retrieving auth token.");
+		Log.i(TAG, "Retrieving auth token.");
 		am.getAuthToken(account, "com.martineve.mendroid.account", true, AMC, null);
 	}
 		
