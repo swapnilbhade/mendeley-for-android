@@ -68,6 +68,7 @@ public class MendeleySyncAdapter extends Service {
 	private static final String TAG = "com.martineve.mendroid.sync.MendeleySyncAdapter";
 	private static SyncAdapterImpl sSyncAdapter = null;
 	private static ContentResolver mContentResolver = null;
+	public static int failCount = 0;
 
 	public MendeleySyncAdapter() {
 		super();
@@ -128,6 +129,18 @@ public class MendeleySyncAdapter extends Service {
 				
 				if (accessToken == null)
 				{
+					if (MendeleySyncAdapter.failCount == 1)
+					{
+						// abort, it's got locked in an oAuth failure cycle
+						Log.i(TAG, "OAuth failure cycle detected; aborting sync.");
+						MendeleySyncAdapter.failCount = 0;
+						return;
+					}
+					
+					Log.i(TAG, "Requesting authorization for an oAuth token.");
+					
+					MendeleySyncAdapter.failCount = 1;
+					
 					mContentResolver = a_app.getContentResolver();
 					
 					AccountManager am = AccountManager.get(a_app);
@@ -149,6 +162,8 @@ public class MendeleySyncAdapter extends Service {
 					
 					return;
 				}
+				
+				MendeleySyncAdapter.failCount = 0;
 				
 				Log.i(TAG, "Parsing access token.");
 				String[] aTSplit = accessToken.split("/");
