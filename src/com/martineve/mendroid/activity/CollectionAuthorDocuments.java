@@ -27,12 +27,15 @@ import android.app.ListActivity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.martineve.mendroid.R;
 import com.martineve.mendroid.adapters.SeparatedListAdapter;
 import com.martineve.mendroid.data.MendeleyCollectionsProvider;
 import com.martineve.mendroid.data.MendeleyDatabase;
+import com.martineve.mendroid.sync.MendeleySyncAdapter;
 
 public class CollectionAuthorDocuments extends ListActivity {
 
@@ -40,6 +43,14 @@ public class CollectionAuthorDocuments extends ListActivity {
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		
+		// determine if a sync is in process
+		TextView emptySync = (TextView) findViewById(R.id.emptySync);
+		if(MendeleySyncAdapter.preFetchedArray != null)
+		{
+			emptySync.setText(Html.fromHtml(getString(R.string.sync_in_progress)));
+		}
+		
 		Bundle extra = getIntent().getExtras();
 		
 		SeparatedListAdapter adapter = new SeparatedListAdapter(this);
