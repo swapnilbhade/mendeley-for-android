@@ -22,9 +22,13 @@
 package com.martineve.mendroid.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.martineve.mendroid.R;
@@ -42,5 +46,18 @@ public class AuthSuccess extends Activity {
 		credits.setText(Html.fromHtml(getString(R.string.credit_text)));
 		credits.setMovementMethod(LinkMovementMethod.getInstance());
 		
+		
+		Button moveNext = (Button) findViewById(R.id.auth_move_next);
+		moveNext.setOnClickListener(moveNextListener);
 	}
+	
+	// Create an anonymous implementation of OnClickListener
+	private OnClickListener moveNextListener = new OnClickListener() {
+	    public void onClick(View v) {
+	    	Intent startMain = new Intent();
+	    	startMain.setClassName("com.martineve.mendroid", "com.martineve.mendroid.MendeleyForAndroid");
+	    	startActivity(startMain);  
+	    }
+	};
+
 }
