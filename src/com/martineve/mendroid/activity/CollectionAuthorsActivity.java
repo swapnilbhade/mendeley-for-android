@@ -30,15 +30,18 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.martineve.mendroid.R;
 import com.martineve.mendroid.data.MendeleyCollectionsProvider;
 import com.martineve.mendroid.data.MendeleyDatabase;
+import com.martineve.mendroid.sync.MendeleySyncAdapter;
 
 public class CollectionAuthorsActivity extends ListActivity {
 	private static String TAG = "com.martineve.mendroid.activity.CollectionAuthorsActivity";

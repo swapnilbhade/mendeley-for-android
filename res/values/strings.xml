@@ -10,6 +10,7 @@
 	<string name="auth_fail_text">Your Mendeley account was not authorized to this device, seemingly through user choice.</string>
 	<string name="credit_text">Copyright &lt;a href=\&quot;http://www.martineve.com\&quot;&gt;Martin Paul Eve&lt;/a&gt;, 2011</string>
 	<string name="sync_in_progress">Your collections are synchronizing and will be available when done.</string>
+	<string name="item_title_text">Collection Item</string>
 	
 	<string name="prefs_cat_sync_title">Synchronization</string>
 	<string name="prefs_sync_collections_title">Sync collections</string>

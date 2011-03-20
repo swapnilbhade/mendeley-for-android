@@ -62,6 +62,7 @@ public class SyncQuitMenu extends TabActivity {
 				finish();
 			} else {
 				// start an sync request
+				// TODO: needs to be called async, apparently
 				ContentResolver.requestSync(a[0], "com.martineve.mendroid.data.mendeleycollectionsprovider", new Bundle());
 			}
 	        return true;

@@ -130,6 +130,8 @@ public class MendeleySyncAdapter extends Service {
 				// this is where the accesstoken callback lands
 				String accessToken = arg0.getResult().getString(AccountManager.KEY_AUTHTOKEN);
 				
+				AccountManager amtwo = AccountManager.get(a_app);
+				
 				if (accessToken == null)
 				{
 					if (MendeleySyncAdapter.failCount == 1)
